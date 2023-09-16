@@ -1,7 +1,41 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.core.validators import MaxValueValidator,MinValueValidator
+
+from django.utils.text import slugify
+from mptt.models import MPTTModel, TreeForeignKey
 # Create your models here.
+
+""""
+from django.db import models
+from PIL import Image
+class FixedSizeImage(models.Model):
+    image = models.ImageField(upload_to='fixed_images/')
+    fixed_width = 300  # Set your desired fixed width
+    fixed_height = 200  # Set your desired fixed height
+
+    def save(self, *args, **kwargs):
+        # Open the uploaded image using PIL
+        img = Image.open(self.image)
+        
+        # Resize the image to the fixed dimensions
+        resized_img = img.resize((self.fixed_width, self.fixed_height), Image.ANTIALIAS)
+        
+        # Create a temporary file to save the resized image
+        temp_img_path = f"temp_{self.image.name}"
+        resized_img.save(temp_img_path)
+        
+        # Open the resized image and save it to the database
+        with open(temp_img_path, 'rb') as temp_img:
+            self.image.save(self.image.name, temp_img, save=False)
+        
+        # Clean up the temporary file
+        import os
+        os.remove(temp_img_path)
+        
+        super(FixedSizeImage, self).save(*args, **kwargs)
+"""
+
 
 STATE_CHOICE=(
     ("dhaka","Dhaka"),
@@ -13,12 +47,7 @@ STATE_CHOICE=(
     ('Chandpur',"Chandpur"),
     ('noakhali','Noakhali')
 )
-CATEGORY_CHOICE=(
-    ('M','Mobile'),
-    ('L','Laptop'),
-    ('TW','Top Ware'),
-    ('BW','Bottom Wear'),
-)
+
 
 STATUS_CHOICE=(
     ('Accepted','Accepted'),
@@ -28,11 +57,47 @@ STATUS_CHOICE=(
     ('Cancel','Cancel')
 )
 
+
+class States_choice(models.Model):
+    name=models.CharField(max_length=200)
+    zipcode=models.PositiveIntegerField()
+    
+
+
+
+
+class Category(MPTTModel):
+    name = models.CharField(max_length=100)
+    image=models.ImageField(upload_to="category",null=True,blank=True)
+    parent = TreeForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='children')
+
+    class MPTTMeta:
+        order_insertion_by = ['name']
+
+    def __str__(self):
+        if self.parent:
+            return str(self.parent)+"_"+str(self.name)
+        else:
+            return str(self.name)
+
+class Brand(models.Model):
+    name=models.CharField(max_length=100)
+    category=models.ManyToManyField(Category,blank=True)
+    image=models.ImageField(upload_to="brand",null=True,blank=True)
+
+    def Category_list(self):
+        return ",".join(str(p.name) for p in self.category.all())
+
+    def __str__(self):
+        return str(self.name)
+    
+
+
 class Customer(models.Model):
     user=models.ForeignKey(User,on_delete=models.CASCADE)
     name=models.CharField(max_length=100)
     locality=models.CharField(max_length=100)
-    city=models.CharField(max_length=50)
+    city=models.CharField(max_length=100)
     zipcode=models.IntegerField()
     state=models.CharField(choices=STATE_CHOICE,max_length= 50)
 
@@ -45,9 +110,12 @@ class Product(models.Model):
     selling_price=models.FloatField()
     discounted_price=models.FloatField()
     description=models.TextField()
-    brand=models.CharField(max_length=100)
-    category=models.CharField(choices=CATEGORY_CHOICE,max_length=2)
+    brand=models.ForeignKey(Brand,on_delete=models.DO_NOTHING,null=True,blank=True)
+    category = models.ForeignKey(Category, on_delete=models.DO_NOTHING,null=True,blank=True)
     product_image=models.ImageField(upload_to="productimg")
+
+    class Meta:
+        ordering = ('title',)
 
     def __str__(self):
         return str(self.title)
@@ -74,3 +142,4 @@ class OrderPlaced(models.Model):
     @property
     def total_cost(self):
         return self.quantity * self.product.discounted_price
+

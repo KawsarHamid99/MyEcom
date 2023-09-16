@@ -5,7 +5,7 @@
 <div class="container">
  <div class="row my-3">
   <div class="col-sm-6 offset-sm-3">
-   <h3>Login</h3>
+   <h3>Welcome to E-shop! Please login</h3>
    <hr>
    <form action="" method="post" novalidate class="shadow p-5">
     {% csrf_token %}
@@ -22,7 +22,7 @@
     <small><a href="{% url 'password_reset' %}">Forgot Password ?</a></small> <br>
     <input type="submit" class="btn btn-primary mt-4" value="Login">
     <br>
-    <div class="text-center text-primary fw-bold"><small>New to ShoppinglyX ? <a href="{% url 'customerregistration' %}"
+    <div class="text-center text-primary fw-bold"><small>New to E-shop ? <a href="{% url 'customerregistration' %}"
        class="text-danger">Create an Account</a> </small></div><br>
        {% if form.non_field_errors %}
   {% for error in form.non_field_errors %}

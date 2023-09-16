@@ -1,0 +1,9 @@
+asgiref==3.6.0
+Django==4.1.7
+django-adminlte3==0.1.6
+django-js-asset==2.1.0
+django-mptt==0.14.0
+Pillow==9.4.0
+sqlparse==0.4.3
+tzdata==2022.7
+whitenoise==6.5.0

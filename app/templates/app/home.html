@@ -3,6 +3,51 @@
 {% block title %}Home{% endblock title %}
 
 {% block banner_slider %}
+
+
+
+
+<style>
+
+  .cart {
+    height: 350px;
+    width: 200px;
+  }
+  .cart-item {
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      padding: 10px;
+      margin-bottom: 20px;
+      box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .item-discounted-price {
+      font-size: 18px;
+      padding: 0;
+      margin: 0;
+      color: #ed343495;
+  }
+
+  .text-truncate-2{
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    word-wrap: break-word;
+  }
+
+  .collection-img span{
+    top: 10px;
+    right: 10px;
+    width: 36px;
+    height: 35px;
+    border-radius: 50%;
+  }
+</style>
+
+
+
 <!--Banner Slider-->
  <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
   <div class="carousel-inner">
@@ -34,7 +79,7 @@
 {% block livesale %}
 <!-- Live Sale Section -->
 <div class="container">
-  <div class="row bg-danger text-center p-5 text-white border-bottom shadow">
+  <div class="row  text-center p-5 text-white border-bottom shadow" style="background-color:  rgb(100, 98, 84);;">
     <h1>SALE IS LIVE NOW</h1>
     <span>5% Instant Discount on Axis Bank Credit and Debit Card</span>
     <small class="fw-lighter">Term and Condition Applied (For details visit Bank's official Website)</small>
@@ -45,27 +90,155 @@
 
 {% block main-content %}
 <!-- 1st Product Slider -->
-<div class="m-3">
+
+  
+
+
+<div class="mt-3 xm-2 mb-0">
  <h2>ShoppingX Deals of The Day</h2>
  <!-- Slider 1 -->
- <div class="owl-carousel" id="slider1">
-  {% for product in allproducts %}
-  <a href="{% url 'product-detail' product.id %}" class="btn"><div class="item"><img src="{{product.product_image.url}}" alt="" height="200px"><span class="fw-bold">{{product.title}}</span><br><span class="fs-5">Tk. {{product.discounted_price}}</span></div></a>
+ <div class="owl-carousel m-0" id="slider1">
+  {% for product in products %}
+
+  <a href="{% url 'product-detail' product.id %}" class="btn cart">
+ 
+          <div class="cart-item m-0">
+              <div class="cart-item-image">
+                <img src="{{product.product_image.url}}" style="width: 100%; height: 200px;" alt="Product image">
+              </div>
+              <div class="cart-item-info">
+                <p  class="fw-normal fs-6 text-dark text-truncate-2" style="margin: 0; height:45px;">{{product.title}}</p>
+                <p class="item-discounted-price font-monospace  text-start">$ {{product.discounted_price}}</p>
+                <div class="d-flex justify-content-between">
+                  <p class="cart-item-price  font-monospace text-decoration-line-through text-muted text-start " style="margin:0; font-size: 15px;">$ {{product.selling_price}}</p>
+                  <span class="align-self-end font-monospace text-muted">-27%</span>
+                </div>
+                
+              </div>
+             
+            </div>
+     
+  </a>
   {% endfor %}
 </div>
 </div>
 <!-- End 1st Product Slider -->
 
+
+<div class="container">
+  <h3 class="text-uppercase">Categories</h3>
+  <div class=" d-flex justify-content-center">
+    <div class="d-flex flex-wrap">
+      {% for category in categories %}
+      {% if category.image  %}
+      <a href="{% url 'category_based' category.id  %}" class="btn p-0 m-0">
+        <div class=" p-2 border border-light bg-light">
+          {% if category.image %}
+          <img src="{{category.image.url}}" style="height: 120px; width: 120px;" alt="">
+          {% else %}
+          <img src=""  style="height: 120px;" alt="not found" srcset="">
+          {% endif %}
+          <p class="text-center text-uppercase pt-2  text-wrap text-truncate-2" style=" width: 7rem; height:55px;" >{{category.name}}</p>
+        </div>
+      </a>
+      {% endif %}
+      {% endfor %}
+    </div>
+</div>
+</div>
+
+
+<div class="container ">
+  <h3 class="mx-2 my-4 py-3">FEATURED PRODUCT</h3>
+  <div class="row">
+    {% for product in products %}
+
+        <div class = " col-6 col-md-4 col-lg-3 col-xl-2 p-2 border border-light best">
+          <a href="{% url 'product-detail' product.id %}" class="btn m-0 p-0" style="padding: 0; margin: 0;">
+          <div class = "collection-img position-relative">
+              <img src = "{{product.product_image.url}}" style="width:100% !important; height: 220px;">
+              <span class = "position-absolute text-white d-flex align-items-center justify-content-center" style="background-color: #8b7d3c; font-size: 10px; font-weight: bold;">-25%</span>
+          </div>
+          <div class = "text-center">
+              <div class = "rating mt-3">
+                  <span class = "text-primary"><i class = "fas fa-star " style="color: #8b7d3c;"></i></span>
+                  <span class = "text-primary"><i class = "fas fa-star " style="color: #8b7d3c;"></i></span>
+                  <span class = "text-primary"><i class = "fas fa-star " style="color: #8b7d3c;"></i></span>
+                  <span class = "text-primary"><i class = "fas fa-star " style="color: #8b7d3c;"></i></span>
+                  <span class = "text-primary"><i class = "fas fa-star " style="color: #8b7d3c;"></i></span>
+              </div>
+              <p class = "text-capitalize my-1 text-truncate-2"  style=" height:45px;">{{product.title}}</p>
+              <span class = "fw-bold">Price $.{{product.discounted_price}}</span>
+          </div>
+        </a>
+        </div>
+      
+
+          <!-- <div class="cart-item m-0">
+              <div class="cart-item-image">
+                <img src="{{product.product_image.url}}" style="width: 100%; height: 200px;" alt="Product image">
+              </div>
+              <div class="cart-item-info">
+                <p  class="fw-normal fs-6 text-dark text-truncate-2" style="margin: 0; height:45px;">{{product.title}}</p>
+                <p class="item-discounted-price font-monospace  text-start">$ {{product.discounted_price}}</p>
+                <div class="d-flex justify-content-between">
+                  <p class="cart-item-price  font-monospace text-decoration-line-through text-muted text-start " style="margin:0; font-size: 15px;">$ {{product.selling_price}}</p>
+                  <span class="align-self-end font-monospace text-muted">-27%</span>
+                </div>
+                
+              </div>
+             
+            </div> -->
+
+    {% endfor %}
+
+    {% if products.has_next %}
+    <div class="pagination d-flex justify-content-center mt-md-5">
+        <span class=" border p-0 m-0" style="background-color: #918658; border-color: #beb070; border-radius: 10%;">
+            {% if products.has_previous %}
+                <a style="background-color: #8b7d3c;" class="btn m-0" href="?page=1">&laquo; FIRST</a>
+                <a style="background-color: #8b7d3c;" class="btn m-0" href="?page={{ products.previous_page_number }}">&lt; PREVIOUS</a>
+            {% endif %}
+            <span class="current-page mx-md-2 " >{{ products.number }} OF {{ products.paginator.num_pages }}</span>
+            {% if products.has_next %}
+                <a style="background-color: #8b7d3c;" class="btn"  href="?page={{ products.next_page_number }}">NEXT  &gt;</a>
+                <a style="background-color: #8b7d3c;" class="btn"  href="?page={{ products.paginator.num_pages }}">LAST &raquo;</a>
+            {% endif %}
+        </span>
+    </div>
+{% endif %}
+    
+  </div>
+  <div class="d-flex justify-content-center">
+    <!-- <button id="load-more" class="btn btn-primary my-3 ">Load More</button> -->
+  </div>
+  
+</div>
+
 <!-- 2st Product Slider -->
-<div class="m-3">
+<!-- <div class="m-3">
   <h2>BottomWares</h2>
-  <!-- Slider 2 -->
+ 
   <div class="owl-carousel" id="slider2">
    {% for product in bottomwares %}
-   <a href="{% url 'product-detail' product.id %}" class="btn"><div class="item"><img src="{{product.product_image.url}}" alt="" height="200px"><span class="fw-bold">{{product.title}}</span><br><span class="fs-5">Tk. {{product.discounted_price}}</span></div></a>
+   <a href="{% url 'product-detail' product.id %}" class="btn cart">
+ 
+          <div class="cart-item">
+              <div class="cart-item-image">
+                <img src="{{product.product_image.url}}" style="width: 100%; height: 200px;" alt="Product image">
+              </div>
+              <div class="cart-item-info">
+                <p  class="fw-normal fs-6 text-dark text-truncate-2" style="margin: 0; height:45px;">{{product.title}}</p>
+                <p class="item-discounted-price font-monospace  text-start">$ {{product.discounted_price}}</p>
+                <p class="cart-item-price  font-monospace text-decoration-line-through text-muted text-start " style="margin:0; font-size: 15px;">$ {{product.selling_price}}</p>
+              </div>
+             
+            </div>
+     
+  </a>
    {% endfor %}
  </div>
- </div>
+ </div> -->
  <!-- End 2st Product Slider -->
 
 <!-- Payment Info Section -->
@@ -105,26 +278,31 @@
 
 <!-- 3st Product Slider -->
 <div class="m-3">
-  <h2>TopWares</h2>
+  <h2>ONLY FOR YOU</h2>
   <!-- Slider 3 -->
   <div class="owl-carousel" id="slider3">
    {% for product in topwares %}
-   <a href="{% url 'product-detail' product.id %}" class="btn"><div class="item"><img src="{{product.product_image.url}}" alt="" height="200px"><span class="fw-bold">{{product.title}}</span><br><span class="fs-5">Tk. {{product.discounted_price}}</span></div></a>
+   <a href="{% url 'product-detail' product.id %}" class="btn cart">
+ 
+    <div class="cart-item">
+        <div class="cart-item-image">
+          <img src="{{product.product_image.url}}" style="width: 100%; height: 200px;" alt="Product image">
+        </div>
+        <div class="cart-item-info">
+          <p  class="fw-normal fs-6 text-dark text-truncate-2" style="margin: 0; height:45px;">{{product.title}}</p>
+          <p class="item-discounted-price font-monospace  text-start">$ {{product.discounted_price}}</p>
+          <p class="cart-item-price  font-monospace text-decoration-line-through text-muted text-start " style="margin:0; font-size: 15px;">$ {{product.selling_price}}</p>
+        </div>
+       
+      </div>
+
+</a>
    {% endfor %}
  </div>
  </div>
  <!-- End 3st Product Slider -->
 
- <!-- 4st Product Slider -->
-<div class="m-3">
-  <h2>Mobile Phone</h2>
-  <!-- Slider 4 -->
-  <div class="owl-carousel" id="slider4">
-   {% for product in mobiles %}
-   <a href="{% url 'product-detail' product.id %}" class="btn"><div class="item"><img src="{{product.product_image.url}}" alt="" height="200px"><span class="fw-bold">{{product.title}}</span><br><span class="fs-5">Tk. {{product.discounted_price}}</span></div></a>
-   {% endfor %}
- </div>
- </div>
+
  <!-- End 4st Product Slider -->
 {% endblock main-content %}
 

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Product,cart,Customer,OrderPlaced
+from .models import Product,cart,Customer,OrderPlaced,Brand
 # Register your models here.
 
 @admin.register(Product)
@@ -18,3 +18,24 @@ class CustomerAdmin(admin.ModelAdmin):
 class OrderAdmin(admin.ModelAdmin):
     list_display=['id','user','customer','product','quantity','orderd_date','status']
 
+@admin.register(Brand)
+class BrandAdmin(admin.ModelAdmin):
+    list_display=['id','name','image','Category_list']
+
+from .models import Category
+from django.utils.safestring import mark_safe
+from mptt.admin import DraggableMPTTAdmin
+
+class CategoryAdmin(DraggableMPTTAdmin):
+    list_display = ('tree_actions', 'indented_title',)
+    list_display_links = ('indented_title',)
+    search_fields = ('name',)
+
+    def indented_title(self, obj):
+        return mark_safe(
+            '&nbsp;&nbsp;&nbsp;' * (obj.level - 1) + str(obj)
+        )
+
+    indented_title.short_description = 'Category'
+
+admin.site.register(Category, CategoryAdmin)

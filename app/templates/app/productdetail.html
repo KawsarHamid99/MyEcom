@@ -4,10 +4,13 @@
 {% block main-content %}
 <div class="container my-5">
  <div class="row">
-  <div class="col-sm-6 text-center align-self-center">
-   <img src="{{ product.product_image.url }}" alt="" class="img-fluid img-thumbnail">
+  <div class="col-sm-6 text-center align-self-start align-self-lg-center">
+   <div>
+    <img src="{{ product.product_image.url }}" alt="" class="img-fluid img-thumbnail" style="height:400px">
+   </div>
   </div>
-  <div class="col-sm-5 offset-sm-1">
+  <!-- <div class="col-sm-5 offset-sm-1"> -->
+  <div class="col-sm-6">
    <h2>Product Title: {{product.title}}</h2>
    <hr>
    <p>Product Description: {{product.description}}</p> <br>
@@ -17,11 +20,11 @@
    {% if not item_already_in_cart %}
     <form action="/cart" method="get" class="d-inline">
     <input type="hidden" name="prod_id" value="{{product.id}}" id="prod_ids">
-    <button type="submit" class="btn btn-primary shadow px-5 py-2">Add To The Cart</button>
+    <button type="submit" class="btn btn-primary shadow  px-2 px-md-4 py-md-2">Add To The Cart</button>
    </form> 
    {% else %}
   
-   <a href="{% url 'showcart' %}" class="btn btn-info shadow px-5 py-2">Show cart </a>
+   <a href="{% url 'showcart' %}" class="btn btn-info shadow px-2 px-md-4 py-2">Show cart </a>
    {% endif %}
    {% endif %}
 
@@ -29,14 +32,14 @@
    {% if not request.user.is_authenticated %}
     <form action="/cart" method="get" class="d-inline">
     <input type="hidden" name="prod_id" value="{{product.id}}" id="prod_ids">
-    <button type="submit" class="btn btn-primary shadow px-5 py-2">Add To The Cart</button>
+    <button type="submit" class="btn btn-primary shadow px-4 py-2">Add To The Cart</button>
    </form> 
    {% endif %}
    
    <!-- <a href="{% url 'add-to-cart' %}" class="btn btn-primary shadow px-5 py-2">Add to Cart</a> -->
 
 
-   <a href="{% url 'buy-now' %}" class="btn btn-danger shadow px-5 py-2 ms-4">Buy Now</a>
+   <a href="{% url 'buy-now' %}" class="btn btn-danger shadow px-2 px-md-4 py-2 ms-4">Buy Now</a>
    <h5 class="mt-5">Available Offers</h5>
    <ul>
     <li>Bank Offer 5% Unlimited Cashback on Flipkart Axis Bank Credit</li>

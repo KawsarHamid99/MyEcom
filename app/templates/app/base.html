@@ -1,5 +1,6 @@
 <!doctype html>
 {% load static %}
+{% load custom_filters %}
 <html lang="en">
   <head>
     <!-- Required meta tags -->
@@ -8,7 +9,7 @@
 
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
-
+    
     <!--Owl Carousel CSS-->
     <link rel="stylesheet" href="{% static 'app/css/owl.carousel.min.css' %}">
 
@@ -19,27 +20,87 @@
     <link rel="stylesheet" href="{% static 'app/css/style.css' %}">
 
 
-    <title>ShoppingX | {% block title %} {% endblock title %} </title>
+    <title>Eshop | {% block title %} {% endblock title %} </title>
+
+    <style>
+      html,body{
+        height: 100%;
+      }
+      body{
+        display: flex;
+        flex-direction: column;
+
+      }
+      .content{
+        flex: 1 0 auto;
+      }
+
+      .footer{
+        flex-shrink: 0;
+      }
+    </style>
   </head>
-  <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-     <div class="container">
-       <a class="navbar-brand" href="/">ShoppingX</a>
+
+  <body style="background-color: rgb(235, 238, 229);">
+        <!-- navbar -->
+        <div class="m-0 p-0" style="background-color: rgb(127, 115, 57);">
+          <ul class="nav justify-content-center m-0 p-0" style="font-size: 12px; font-weight: 500;">
+              <li class="nav-item">
+                <a class="nav-link text-white m-0 py-0 " aria-current="page" href="{% url 'customersupport' %}">CUSTOMER CARE</a>
+              </li>
+              <li class="nav-item">
+                  <a class="nav-link text-white m-0 py-0 " aria-current="page" href="#">BLOGS</a>
+                </li>
+              <li class="nav-item">
+                <a class="nav-link text-white  m-0 py-0" href="#">TRACK MY ORDER</a>
+              </li>
+              <li class="nav-item">
+                  <a class="nav-link text-white  m-0 py-0" href="{% url 'aboutus' %}">ABOUT US</a>
+                </li>
+              {% if not request.user.is_authenticated %}
+              <li class="nav-item">
+                <a class="nav-link text-white  m-0 py-0" href="{% url 'login' %}">SIGNUP/LOGIN</a>
+              </li>
+              {% else %}
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle text-white  m-0 py-0" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  {{request.user}}
+                </a>
+                <ul class="dropdown-menu" aria-labelledby="profileDropdown">
+                  <li><a class="dropdown-item" href="{% url 'profile' %}">Profile</a></li>
+                  <li><a class="dropdown-item" href="{% url 'orders' %}">Orders</a></li>
+                  <li><a class="dropdown-item" href="{% url 'changepassword' %}">Change Password</a></li>
+                  <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
+                </ul>
+              </li>
+
+              {% endif %}
+        
+            </ul>
+  
+      </div>
+      <!-- navbar -->
+
+    <nav class="navbar navbar-expand-lg navbar-dark " style="background-color: rgb(127, 115, 57);">
+     <div class="container" style="font-weight: 500;">
+       <a class="navbar-brand" href="/">E-SHOP</a>
        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
          <span class="navbar-toggler-icon"></span>
        </button>
-       <div class="collapse navbar-collapse" id="navbarSupportedContent">
+       <div class="collapse navbar-collapse fs-6 text-uppercase" id="navbarSupportedContent">
          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-           <li class="nav-item">
-             <a class="nav-link active" aria-current="page" href="/">Home</a>
-           </li>
+           
            <li class="nav-item dropdown">
              <a class="nav-link dropdown-toggle text-white" href="#" id="electronicsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-               Electronics
+               Electronics & Accessories
              </a>
              <ul class="dropdown-menu" aria-labelledby="electronicsDropdown">
-               <li><a class="dropdown-item" href="{% url 'mobile' %}">Mobile</a></li>
-               <li><a class="dropdown-item" href="#">Laptop</a></li>
+
+              {% my_custom_tag as filtered_data %}
+              {% for category in filtered_data.electronics %}
+              <li><a class="dropdown-item text-uppercase" href="{% url 'category_based' category.id  %}">{{category.name}}</a></li>
+              {% endfor %}
+
              </ul>
            </li>
            <li class="nav-item dropdown">
@@ -47,14 +108,39 @@
                Fashion
              </a>
              <ul class="dropdown-menu" aria-labelledby="fashionDropdown">
-               <li><a class="dropdown-item" href="#">Top Wear</a></li>
-               <li><a class="dropdown-item" href="#">Bottom Wear</a></li>
+              
+              {% for category in filtered_data.fashion %}
+              <li><a class="dropdown-item text-uppercase" href="{% url 'category_based' category.id  %}">{{category.name}}</a></li>
+              {% endfor %}
+               <li><a class="dropdown-item" href="#">Men's & Boys' Fashion</a></li>
+               <li><a class="dropdown-item" href="#">Women's & Girls' Fashion</a></li>
+               <li><a class="dropdown-item" href="#">Kids Zone</a></li>
              </ul>
            </li>
+           <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle text-white" href="#" id="fashionDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Gift Items
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="fashionDropdown">
+              {% for category in filtered_data.gift %}
+              <li><a class="dropdown-item text-uppercase" href="{% url 'category_based' category.id %}"> {{category.name}}</a></li>
+              {% endfor %}
+            </ul>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle text-white" href="#" id="fashionDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Health & Beauty
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="fashionDropdown">
+              {% for category in filtered_data.health_beauty %}
+              <li><a class="dropdown-item text-uppercase" href="{% url 'category_based' category.id %}">{{category.name}}</a></li>
+              {% endfor %}
+            </ul>
+          </li>
          </ul>
-         <form class="d-flex">
+         <form class="d-flex flex-md-grow-1">
            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-           <button class="btn btn-warning" type="submit">S</button>
+           <button class="btn btn-warning" type="submit"><i class="fas fa-search"></i></button>
          </form>
          <div>
           <ul class="navbar-nav me-auto mb-2 mb-lg-0">
@@ -71,7 +157,18 @@
               </ul>
             </li>
             <li class="nav-item mx-2">
-             <a href="{% url 'showcart' %}" class="nav-link text-white"><span class="badge bg-danger">4</span> Cart </a>
+             <a href="{% url 'showcart' %}" class="nav-link text-white px-0">
+              <div class = "mycart-img  position-relative ">
+                <img src = "{% static 'app/images/cart.png' %}" style="width:100% !important; height: 30px;">
+                {% if request.user.is_authenticated %}
+                {% cart_filter request.user as cartcount %}
+                {% if cartcount %}
+                <span class = "position-absolute text-white d-flex align-items-center justify-content-center" style="font-size: 10px; font-weight: bold;">{{cartcount}}</span>
+                {% endif %}
+                {% endif %}
+            </div>
+
+            </a>
             </li>
             {% else %}
             <li class="nav-item mx-2">
@@ -91,12 +188,11 @@
     {% block livesale %} {% endblock livesale %}
     {% block main-content %} {% endblock main-content %}
 
-    <!-- Start Footer -->
-    <footer class="container-fluid bg-dark text-center p-2 mt-5">
-        <small class="text-white">Copyright &copy; 2023 || Designed By HK-Solution LTD. || </small>
-        <img src="{% static 'app/images/payment.png' %}" alt="" srcset="" class="img-fluid" height="2px">
-    </footer> <!-- End Footer -->
+    {% block footer %} 
+      {% include 'app/snippet/footer.html' %}
+    {% endblock footer %}
 
+    
     <!-- Jquery -->
     <script src="https://code.jquery.com/jquery-3.5.1.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
     <!-- Bootstrap Bundle with Popper -->

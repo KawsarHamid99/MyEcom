@@ -1,7 +1,10 @@
 {% extends 'app/base.html' %}
 {% load static %}
 {% block title %}Cart{% endblock title %}
+
+
 {% block main-content %}
+{% if cart %}
 <div class="container my-5">
  <div class="row">
   <h1 class="text-center mb-5">Shopping Cart</h1>
@@ -9,8 +12,6 @@
   <div class="card">
    <div class="card-body">
     <h3>Cart</h3>
-
-    {% if cart %}
     {% for item in cart %}
     <hr class="text-muted">
     <div class="row">
@@ -59,10 +60,23 @@
     </div>
    </div>
   </div>
-  {% endif %}
-  
  </div>
 </div>
+{% else %}
+<div class="container">
+  <div class=" my-xl-5 ">
+    <a  class="btn  d-flex felx-row justify-content-center border border-light " href="{% url 'home' %}">
+      <div class=" pt-xl-3  ">
+        <div>
+          <img src="{% static 'app/images/emptycart.png' %}" class="ms-5" style="width: 200px; height: 200px;" alt="" srcset="">
+          <h3 class="text-uppercase mt-3" style="color: rgb(246, 158, 16);">add product to the cart</h3>
+        </div>
+      </div>
+    </a>
+  </div>
+
+</div>
+{% endif %}
 <div class="container">
  <div class="row">
   <div class="col-sm-8">

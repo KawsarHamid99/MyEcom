@@ -25,12 +25,15 @@ SECRET_KEY = "django-insecure-h-2(iu9*)-bz3avjrzg*ymqp63)c)jc$1*$z&+lw&iuz#so4^^
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    "adminlte3",
+    "adminlte3_theme",
+    
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -38,9 +41,11 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "app",
+    "mptt",
 ]
 
 MIDDLEWARE = [
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -64,6 +69,9 @@ TEMPLATES = [
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
             ],
+            # 'builtins': [
+            #     'adminlte.template_tags',
+            # ],
         },
     },
 ]
@@ -110,10 +118,15 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
-STATIC_URL = "static/"
 
+import os
+STATIC_URL = "static/"
+STATICFILES_DIRS=[
+    os.path.join(BASE_DIR,'static')
+]
+STATIC_ROOT=os.path.join(BASE_DIR,'assets')
 MEDIA_URL = '/media/'
-MEDIA_ROOT=  BASE_DIR / 'media'
+MEDIA_ROOT=  os.path.join(BASE_DIR,'media')
 #LOGIN_REDIRECT_URL="/profile/"
 LOGIN_REDIRECT_URL="/"
 EMAIL_BACKEND='django.core.mail.backends.console.EmailBackend'

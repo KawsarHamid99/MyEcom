@@ -1,5 +1,5 @@
 from django.shortcuts import render,HttpResponseRedirect,redirect
-from  .models import Customer,Product,cart,OrderPlaced
+from  .models import Customer,Product,cart,OrderPlaced,Category
 from django.views import View
 from django.contrib import messages
 from .forms import CustomerRegistrationForm,UserLoginForm,CustomerProfileForm
@@ -8,20 +8,43 @@ from django.db.models import Q
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
+from django.core.paginator import Paginator
 
 class ProductView(View):
  def get(self,request):
   totalitem=0
-  topwares=Product.objects.filter(category='TW')
-  bottomwares=Product.objects.filter(category='BW')
-  mobiles=Product.objects.filter(category='M')
-  laptops=Product.objects.filter(category="L")
+  # topwares=Product.objects.filter(category='TW')
+  # bottomwares=Product.objects.filter(category='BW')
+  # mobiles=Product.objects.filter(category='M')
+  # laptops=Product.objects.filter(category="L")
+
+  topwares=Product.objects.all()
+  bottomwares=Product.objects.all()
+  mobiles=Product.objects.all()
+  laptops=Product.objects.all()
+  
+  parentsCategory=Category.objects.filter(parent__isnull=True).get_descendants()
+  
+  # print(parentsCategory)
+  s=None
+  for mysort in parentsCategory:
+   s=Category.objects.filter(parent=mysort.pk).exists()
+
+
+  electronics_P=Category.objects.get(pk=4)
+  electronics=Category.objects.filter(parent=electronics_P)
+
   allproducts=Product.objects.all()
+  paginator = Paginator(allproducts, 100)  
+  page = request.GET.get('page')
+  products = paginator.get_page(page)
+
+
   if request.user.is_authenticated:
    totalitem=len(cart.objects.filter(user=request.user))
   return render(request,'app/home.html',{'topwares':topwares,
             "bottomwares":bottomwares,"mobiles":mobiles,"laptops":laptops,
-            "totalitem":totalitem,"allproducts":allproducts})
+            "totalitem":totalitem,"products":products,"categories":parentsCategory})
   
 
 
@@ -29,10 +52,14 @@ class ProductDetailsView(View):
  def get(self,request,id):
   totalitem=0
   product=Product.objects.get(id=id)
+
   item_already_in_cart=False
   
   if request.user.is_authenticated:
-   item_already_in_cart=cart.objects.filter(Q(product=product.id),Q(user=request))
+  #  print(cart.objects.filter(product=product.id,user=request.user.id))
+   #item_already_in_cart=cart.objects.filter(Q(product=product.id),Q(user=request.user.username))
+   item_already_in_cart=cart.objects.filter(product=product.id,user=request.user.id)
+ 
    return render(request,'app/productdetail.html',{"product":product,"item_already_in_cart":item_already_in_cart,"totalitem":totalitem})
   else:
     return render(request,'app/productdetail.html',{"product":product,"totalitem":totalitem})
@@ -168,7 +195,6 @@ def minuscart(request):
    tempamount= p.quantity * p.product.discounted_price
    amount += tempamount
    total_amount = shiping_amount + amount
-  print("---------------",Cart.total_cost)
   data={
    'amount':amount,
    'totalamount':total_amount,
@@ -209,16 +235,22 @@ def removecart(request):
 def change_password(request):
  return render(request, 'app/changepassword.html')
 
-def mobile(request,data=None):
+def mobile(request,data=None,pk=None):
  if data==None:
-  mobile=Product.objects.filter(category='M')
+  #mobile=Product.objects.filter(category=8)
+  mobile=Product.objects.all()
  elif(data=="Xiaomi" or data=="Apple"):
-  mobile=Product.objects.filter(category='M').filter(brand=data)
+  mobile=Product.objects.filter(category=8).filter(brand=data)
  elif(data=="Below"):
-  mobile=Product.objects.filter(category='M').filter(discounted_price__lte=20000)
+  mobile=Product.objects.filter(category=8).filter(discounted_price__lte=20000)
  else:
-  mobile=Product.objects.filter(category='M').filter(discounted_price__gt=20000)
- return render(request, 'app/mobile.html',{"mobiles":mobile})
+  mobile=Product.objects.filter(category=8).filter(discounted_price__gt=20000)
+ return render(request, 'app/category_based.html',{"mobiles":mobile})
+
+def category_based(request,pk=None):
+ mobile=Product.objects.all()
+ search_category=Product.objects.filter(category=pk)
+ return render(request, 'app/category_based.html',{"mobiles":search_category})
 
 @login_required
 def checkout(request):
@@ -251,7 +283,15 @@ def payment(request):
  
 def buy_now(request):
  return render(request, 'app/buynow.html')
+
 @login_required
 def orders(request):
  op=OrderPlaced.objects.filter(user=request.user)
  return render(request, 'app/orders.html',{'op':op})
+
+
+def aboutus(request):
+ return render(request,"app/aboutus.html")
+
+def customersupport(request):
+ return render(request,"app/customersupport.html")
