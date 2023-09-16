@@ -5,5 +5,68 @@
 {% block main-content %}
 <div class="container content">
 
+
+    <style>
+        /* Add your custom styles here */
+        body {
+            background-color: #f8f9fa;
+        }
+        .customer-care-container {
+            padding: 40px 0;
+        }
+        .contact-form {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+
+    <!-- Customer Care Content -->
+    <div class="container customer-care-container">
+        <div class="row">
+            <div class="col-lg-8">
+                <h1>Customer Care</h1>
+                <p>We are here to assist you in any way we can. If you have questions, feedback, or need assistance, please feel free to contact us using the following methods:</p>
+                
+                <h2>Contact Information</h2>
+                <ul>
+                    <li><strong>Email:</strong> support@yourstore.com</li>
+                    <li><strong>Phone:</strong> +1 (123) 456-7890</li>
+                    <li><strong>Address:</strong> 123 Main Street, City, Country</li>
+                </ul>
+                
+                <h2>Customer Support</h2>
+                <p>Our dedicated customer support team is available to assist you during the following hours:</p>
+                <ul>
+                    <li><strong>Monday - Friday:</strong> 9:00 AM - 5:00 PM</li>
+                    <li><strong>Saturday:</strong> 10:00 AM - 2:00 PM</li>
+                    <li><strong>Sunday:</strong> Closed</li>
+                </ul>
+            </div>
+            <div class="col-lg-4">
+                <div class="contact-form">
+                    <h2>Contact Us</h2>
+                    <form id="contact-form">
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Your Name</label>
+                            <input type="text" class="form-control" id="name" name="name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Your Email</label>
+                            <input type="email" class="form-control" id="email" name="email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="message" class="form-label">Message</label>
+                            <textarea class="form-control" id="message" name="message" rows="4" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Send Message</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
 </div>
 {% endblock main-content %}
