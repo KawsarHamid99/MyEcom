@@ -1,5 +1,6 @@
 {% extends 'app/base.html' %}
 {% load static %}
+{% load custom_filters %}
 {% block title %}Buy Now{% endblock title %}
 {% block main-content %}
 
@@ -43,44 +44,33 @@
   </style>
 
 
-<div class="container content my-5">
+<div class="container content my-3">
+<div class="row">
+    <div class="col-md-6  ps-md-4">
+        <h5 class="text-uppercase">category:{{root_parent}}</h5>
+    </div>
+    <hr>
+</div>
  <div class="row">
   <div class="col-sm-3">
     <div class="list-group">
-        <a href="{% url 'mobile' %}" class="list-group-item list-group-item-action" aria-current="true">All Mobile</a>
-        <a href="{% url 'mobiledata' 'Xiaomi' %}" class="list-group-item list-group-item-action" aria-current="true">Redmi</a>
-        <a href="{% url 'mobiledata' 'Apple' %}" class="list-group-item list-group-item-action" aria-current="true">Apple</a>
-        <a href="{% url 'mobiledata' 'Below' %}" class="list-group-item list-group-item-action" aria-current="true">below</a>
-        <a href="{% url 'mobiledata' 'Above' %}" class="list-group-item list-group-item-action" aria-current="true">above</a>
-    
+        {% for category in catragorylist %}
+        <a href="{% url 'category_based' category.id %}" class="list-group-item list-group-item-action text-uppercase" aria-current="true">{{category.name}} {{category.id}}</a>
+        {% endfor %}
        </div>
   </div>
-  <div class="col-sm-8 offset-sm-1">
-    <!-- <div class="row">
-        {% for product in mobiles %}
-            <div class="col-sm-4 text-center mb-4">
-                <a href="{% url 'product-detail' product.id %}" class=" btn">
-                    <div class="item">
-                        <img src="{{product.product_image.url}}" alt="Not Found" height="300">
-                        <div class="fw-bold">{{product.title}}</div>
-                        <div class="fw-bold">Price: {{product.discounted_price}} <small class="fw-light text-decoration-line-through">{{product.selling_price}}</small></div>
-                    </div>
-                </a>
-    
-            </div>
-        {% endfor %}
-    
-       </div> -->
-
-
-       <div class="row">
+  <div class="col-sm-8 offset-md-1 shadow bg-light ">
+       <div class="row d-flex justify-content-center">
         {% for product in mobiles %}
     
-            <div class = " col-6 col-md-4 col-lg-3 col-xl-3 p-2 border border-light best">
+            <div class = " col-6 col-md-4 col-lg-3 col-xl-3 m-2 shadow best">
               <a href="{% url 'product-detail' product.id %}" class="btn m-0 p-0" style="padding: 0; margin: 0;">
               <div class = "collection-img position-relative">
                   <img src = "{{product.product_image.url}}" style="width:100% !important; height: 220px;">
-                  <span class = "position-absolute text-white d-flex align-items-center justify-content-center" style="background-color: #8b7d3c;">-25%</span>
+                  {% if product.discounted_price %}
+                  <span class = "position-absolute text-white d-flex align-items-center justify-content-center" style="background-color: #8b7d3c;">-{% discount_percentage product.selling_price product.discounted_price %}%</span>
+                  {% endif %}
+                  
               </div>
               <div class = "text-center">
                   <div class = "rating mt-3">
@@ -91,7 +81,11 @@
                       <span class = "text-primary"><i class = "fas fa-star " style="color: #8b7d3c;"></i></span>
                   </div>
                   <p class = "text-capitalize my-1 text-truncate-2"  style=" height:45px;">{{product.title}}</p>
+                  {% if product.discounted_price %}
                   <span class = "fw-bold">Price $.{{product.discounted_price}}</span>
+                  {% else %}
+                  <span class = "fw-bold">Price $.{{product.selling_price}}</span>
+                  {% endif %}
               </div>
             </a>
             </div>
@@ -114,6 +108,15 @@
     {% endif %}
         
       </div>
+
+      {% if not mobiles %}
+      <div class="row py-xl-5 py-md-5">
+        <div class="d-flex flex-column ">
+            <img class=" col-12 align-self-center" src="{% static 'app/images/out-of-stock 2.png' %}" style="width: 200px;" alt="" >
+            <div class=" align-self-center text-center" style="font-size: 20px; font-weight: 500; color: #7a7768;">PRODUCT IS NOT AVAILABLE FOR THIS CATEGORY AT THIS MOMENT</div>
+        </div>
+      </div>
+      {% endif %}
   </div>
  </div>
 </div>

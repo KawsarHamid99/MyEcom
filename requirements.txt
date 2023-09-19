@@ -1,9 +1,17 @@
 asgiref==3.6.0
+certifi==2023.7.22
+charset-normalizer==3.2.0
 Django==4.1.7
 django-adminlte3==0.1.6
 django-js-asset==2.1.0
 django-mptt==0.14.0
+idna==3.4
 Pillow==9.4.0
+python-dotenv==1.0.0
+requests==2.31.0
 sqlparse==0.4.3
+stripe==6.5.0
+typing_extensions==4.8.0
 tzdata==2022.7
+urllib3==2.0.4
 whitenoise==6.5.0

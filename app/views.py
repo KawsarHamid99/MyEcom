@@ -9,26 +9,22 @@ from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.core.paginator import Paginator
+from django.conf import settings
+import stripe
+
+stripe.api_key=settings.STRIPE_SECRET_KEY
 
 class ProductView(View):
  def get(self,request):
   totalitem=0
-  # topwares=Product.objects.filter(category='TW')
-  # bottomwares=Product.objects.filter(category='BW')
-  # mobiles=Product.objects.filter(category='M')
-  # laptops=Product.objects.filter(category="L")
-
   topwares=Product.objects.all()
   bottomwares=Product.objects.all()
   mobiles=Product.objects.all()
   laptops=Product.objects.all()
   
   parentsCategory=Category.objects.filter(parent__isnull=True).get_descendants()
-  
-  # print(parentsCategory)
-  s=None
-  for mysort in parentsCategory:
-   s=Category.objects.filter(parent=mysort.pk).exists()
+  categories_without_children = Category.objects.filter(children__isnull=True)
+ 
 
 
   electronics_P=Category.objects.get(pk=4)
@@ -44,7 +40,7 @@ class ProductView(View):
    totalitem=len(cart.objects.filter(user=request.user))
   return render(request,'app/home.html',{'topwares':topwares,
             "bottomwares":bottomwares,"mobiles":mobiles,"laptops":laptops,
-            "totalitem":totalitem,"products":products,"categories":parentsCategory})
+            "totalitem":totalitem,"products":products,"categories":categories_without_children})
   
 
 
@@ -141,7 +137,12 @@ def show_cart(request):
   cart_product=[p for p in cart.objects.all() if p.user==user]
   if cart_product:
    for p in cart_product:
-    tempamount= p.quantity * p.product.discounted_price
+    if p.product.discounted_price:
+     tempamount= p.quantity * p.product.discounted_price
+    else:
+     tempamount= p.quantity * p.product.selling_price
+     
+     
     amount += tempamount
     total_amount = shiping_amount + amount
    return render(request,'app/addtocart.html',{'cart': Cart,"amount":amount,"total_amount":total_amount,"shiping_amount":shiping_amount})
@@ -165,7 +166,10 @@ def pluscart(request):
   cart_product=[p for p in cart.objects.all() if p.user==user]
  
   for p in cart_product:
-   tempamount= p.quantity * p.product.discounted_price
+   if p.product.discounted_price:
+    tempamount= p.quantity * p.product.discounted_price
+   else:
+    tempamount= p.quantity * p.product.selling_price
    amount += tempamount
    total_amount = shiping_amount + amount
   data={
@@ -182,7 +186,11 @@ def minuscart(request):
   prod_id=request.GET["prod_id"]
   user=request.user
   Cart=cart.objects.get(Q(user=user),Q(product=prod_id))
-  Cart.quantity -= 1
+  if Cart.quantity > 1:
+   Cart.quantity -= 1
+  else:
+   Cart.quantity = 1
+   
   Cart.save()
 
   amount=0.0
@@ -192,7 +200,10 @@ def minuscart(request):
   cart_product=[p for p in cart.objects.all() if p.user==user]
  
   for p in cart_product:
-   tempamount= p.quantity * p.product.discounted_price
+   if p.product.discounted_price:
+    tempamount= p.quantity * p.product.discounted_price
+   else:
+    tempamount= p.quantity * p.product.selling_price
    amount += tempamount
    total_amount = shiping_amount + amount
   data={
@@ -219,7 +230,10 @@ def removecart(request):
   cart_product=[p for p in cart.objects.all() if p.user==user]
  
   for p in cart_product:
-   tempamount= p.quantity * p.product.discounted_price
+   if p.product.discounted_price:
+    tempamount= p.quantity * p.product.discounted_price
+   else:
+    tempamount= p.quantity * p.product.selling_price
    amount += tempamount
    total_amount = shiping_amount + amount
   data={
@@ -248,9 +262,25 @@ def mobile(request,data=None,pk=None):
  return render(request, 'app/category_based.html',{"mobiles":mobile})
 
 def category_based(request,pk=None):
- mobile=Product.objects.all()
- search_category=Product.objects.filter(category=pk)
- return render(request, 'app/category_based.html',{"mobiles":search_category})
+ print("-----------------------------------------------")
+ category=Category.objects.filter(parent__isnull=True)
+ category=Category.objects.filter(parent__parent__isnull=True,parent__isnull=False)
+ categories_without_children = Category.objects.filter(children__isnull=True)
+ last_level_child = Category.objects.get(pk=pk) 
+ root_parent = last_level_child.get_root_parent()
+ all_level_children = root_parent.get_all_children()
+ path_to_last_child = last_level_child.get_path_to_last_child()
+
+ children_of_parent = Category.find_children_by_parent_pk(pk)
+ search_category=Product.objects.filter(category__parent=pk)
+ if not children_of_parent:
+  children=Category.objects.get(pk=pk)
+  print(children.parent.id)
+  children_of_parent=Category.find_children_by_parent_pk(children.parent.id)
+  print(children_of_parent)
+  search_category=Product.objects.filter(category=pk)
+
+ return render(request, 'app/category_based.html',{"mobiles":search_category,"catragorylist":children_of_parent,"root_parent":root_parent})
 
 @login_required
 def checkout(request):
@@ -264,21 +294,37 @@ def checkout(request):
  cart_product=[p for p in cart.objects.all() if p.user==user ]
  if cart_product:
   for p in cart_product:
-   tempamount= p.quantity*p.product.discounted_price
-  amount += tempamount
+   if p.product.discounted_price:
+    tempamount= p.quantity*p.product.discounted_price
+    amount += tempamount
+   else:
+    tempamount= p.quantity*p.product.selling_price
+    amount += tempamount
   totalamount=amount+shipping_amount
  return render(request, 'app/checkout.html',{"add":add,"totalamount":totalamount,
- "amount":amount,"shipping":shipping_amount,"cart_items":cart_items})
+ "amount":amount,"shipping":shipping_amount,"cart_items":cart_items,'key':settings.STRIPE_PUBLIC_KEY})
 
 @login_required
 def payment(request):
- custid = request.GET.get('custid')
+ custid = request.POST.get('custid')
  user=request.user
  customer=Customer.objects.get(id=custid)
  Cart=cart.objects.filter(user=user)
+ print("------------------------------------------------------")
+ print(Cart)
+ totalprice=0
+ productlist=[]
  for c in Cart:
-  OrderPlaced(user=user,customer=customer,product=c.product,quantity=c.quantity).save()
+  if c.product.discounted_price:
+    totalprice=totalprice+int(c.quantity)*c.product.discounted_price
+    productlist.append(["PN:"+ str(c.product) +"; PQ:" + str(c.quantity)  +"; Price/unit:"+ str(c.product.discounted_price)])
+  else:
+   totalprice=totalprice+int(c.quantity)*c.product.selling_price
+   productlist.append(["PN:"+ str(c.product) +"; PQ:" + str(c.quantity)  +"; Price/unit:"+ str(c.product.selling_price)])
+   
+  OrderPlaced(user=user,customer=customer,product=c.product,quantity=c.quantity,status="Accepted").save()
   c.delete()
+ charge=stripe.Charge.create(amount=int(totalprice*100),currency='usd',description=str(productlist),source=request.POST['stripeToken'])
  return redirect("orders")
  
 def buy_now(request):
@@ -286,7 +332,7 @@ def buy_now(request):
 
 @login_required
 def orders(request):
- op=OrderPlaced.objects.filter(user=request.user)
+ op=OrderPlaced.objects.filter(user=request.user).order_by("orderd_date").reverse()
  return render(request, 'app/orders.html',{'op':op})
 
 

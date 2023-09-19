@@ -1,5 +1,6 @@
 {% extends 'app/base.html' %}
 {% load static %}
+{% load custom_filters %}
 {% block title %}Buy Now{% endblock title %}
 {% block main-content %}
 <div class="container">
@@ -12,34 +13,73 @@
         <div class="card-body">
           <h5>Product: {{item.product.title}}</h5>
           <p>Quantity: {{item.quantity}}</p>
-          <p class="fw-bold">Price: {{item.total_cost}}</p>
+          <p class="fw-bold">Price: ${{item.total_cost}}</p>
         </div>
       </div>
       {% endfor %}
-      <p class="fw-bold">Total Amount with Shipping Amount: Tk. {{totalamount}}</p>
+      <p class="fw-bold">Total Amount with Shipping Amount: ${{totalamount}}</p>
     <small>Term and Condition: Lorem ipsum dolor sit amet consectetur adipisicing elit. Mollitia, ullam saepe! Iure optio repellat dolor velit, minus rem. Facilis cumque neque numquam laboriosam, accusantium adipisci nisi nihil in et quis?</small>
   </div>
   <div class="col-sm-4 offset-sm-1">
     <h4>Select Shipping Address</h4>
     <hr>
-    <form action="/payment">
+    <form action="/payment/" method="post">
+      {% csrf_token %}
+      {% if add %}
       {% for ad in add %}
       <div class="card">
         <div class="card-body">
-        <h5>{{ad.name}}</h5>
-        <p>{{ad.locality}},{{ad.city}},{{ad.state}} - {{ad.zipcode}}</p>
+          <h5>{{ad.name}}</h5>
+          <p>{{ad.locality}}, {{ad.city}}, {{ad.state}} - {{ad.zipcode}}</p>
         </div>
       </div>
-        <div class="form-check mt-2 mb-5">
-          <input class="form-check-input" type="radio" value="{{ad.id}}" name="custid" id="custid{{forloop.counter}}">
-          <label class="form-check-label fw-bold" for="">
-            Address: {{forloop.counter}} </label>
+      <div class="form-check mt-2 mb-5">
+        <input class="form-check-input" type="radio" value="{{ad.id}}" name="custid" id="custid{{forloop.counter}}" required>
+        <label class="form-check-label fw-bold" for="custid{{forloop.counter}}">
+          Address: {{forloop.counter}}
+        </label>
+      </div>
+      {% endfor %}
+      {% else %}
+      <div class="card my-md-5">
+        <div class="card-body">
+          <div class="text-uppercase text-center ">
+            <h3 class="text-muted">No Shipping address has been found</h3>
+            <p class="text-muted">without shipping address payment cannot be processed.</p>
+            <a href="{% url 'profile' %}" class="btn border btn-primary border-primary px-3 py-md-2 mt-2 mb-md-3  ">add shiiping address</a>
+          </div>
+
         </div>
-        {% endfor %}
-        <div class="text-end pb-2">
-          <button type="submit" class="btn btn-warning mt-3 px-5 fw-bold">Checkout</button>
-        </div>
-      </form>
+
+      </div>
+      {% endif %}
+      <div class="text-center pb-2 border border-primary mb-5">
+        <p class="text-info pb-0 mb-0" id="checkouttext">CHOOSE A ADDRESS TO MAKE PAYMENT</p>
+        <button type="submit" class="btn btn-warning mt-2 fw-bold" id="checkoutButton" disabled>
+          <script src="https://checkout.stripe.com/checkout.js" class="stripe-button" data-key="{{key}}"
+            data-description="PAYMENT GATEWAY"
+            data-amount="{% total_checkoutPrice totalamount %}"
+            data-locale="auto"></script>
+        </button>
+      </div>
+    </form>
+    
+    <script>
+      // Get all the radio buttons
+      const radioButtons = document.querySelectorAll('input[type="radio"]');
+      const checkoutButton = document.getElementById('checkoutButton');
+      const checkouttext = document.getElementById('checkouttext');
+    
+      // Add a click event listener to each radio button
+      radioButtons.forEach((radio) => {
+        radio.addEventListener('click', function () {
+          // Enable the checkout button when a radio button is clicked
+          checkoutButton.removeAttribute('disabled');
+          checkouttext.setAttribute('hidden','true');
+        });
+      });
+    </script>
+    
     </div>
   </div>
 </div>

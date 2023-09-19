@@ -70,6 +70,7 @@ class Category(MPTTModel):
     name = models.CharField(max_length=100)
     image=models.ImageField(upload_to="category",null=True,blank=True)
     parent = TreeForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='children')
+    
 
     class MPTTMeta:
         order_insertion_by = ['name']
@@ -79,6 +80,40 @@ class Category(MPTTModel):
             return str(self.parent)+"_"+str(self.name)
         else:
             return str(self.name)
+        
+    def get_root_parent(self):
+        # Recursively find the root parent (top-level ancestor) for this category.
+        if self.parent is None:
+            return self
+        return self.parent.get_root_parent()
+
+    def get_all_children(self):
+        # Get all children of this category, including itself.
+        return self.get_descendants(include_self=True)
+    
+    def get_path_to_last_child(self):
+        path = [self]
+        current_category = self
+
+        while current_category.parent:
+            path.append(current_category.parent)
+            current_category = current_category.parent
+
+        # Reverse the path to get the correct order (from root to last child).
+        path.reverse()
+
+        return path
+    
+
+    @classmethod
+    def find_children_by_parent_pk(cls, parent_pk):
+        try:
+            parent_category = cls.objects.get(pk=parent_pk)
+        except cls.DoesNotExist:
+            return []
+
+        return cls.objects.filter(parent=parent_category)
+
 
 class Brand(models.Model):
     name=models.CharField(max_length=100)
@@ -108,7 +143,7 @@ class Customer(models.Model):
 class Product(models.Model):
     title=models.CharField(max_length=100)
     selling_price=models.FloatField()
-    discounted_price=models.FloatField()
+    discounted_price=models.FloatField(null=True,blank=True)
     description=models.TextField()
     brand=models.ForeignKey(Brand,on_delete=models.DO_NOTHING,null=True,blank=True)
     category = models.ForeignKey(Category, on_delete=models.DO_NOTHING,null=True,blank=True)
@@ -124,9 +159,12 @@ class cart(models.Model):
     user=models.ForeignKey(User,on_delete=models.CASCADE)
     product=models.ForeignKey(Product,on_delete=models.CASCADE)
     quantity=models.PositiveIntegerField(default=1)
-
+    
     def total_cost(self):
-        return self.quantity * self.product.discounted_price
+        if self.product.discounted_price:
+            return self.quantity * self.product.discounted_price
+        else:
+            return self.quantity * self.product.selling_price
 
     def __str__(self):
         return str(self.id)
@@ -137,9 +175,12 @@ class OrderPlaced(models.Model):
     product=models.ForeignKey(Product,on_delete=models.CASCADE)
     quantity=models.PositiveIntegerField()
     orderd_date=models.DateTimeField(auto_now_add=True)
-    status=models.CharField(choices=STATUS_CHOICE,max_length=100,default="pending")
+    status=models.CharField(choices=STATUS_CHOICE,max_length=100,default="orderd_date")
 
     @property
     def total_cost(self):
-        return self.quantity * self.product.discounted_price
+        if self.product.discounted_price:
+            return self.quantity * self.product.discounted_price
+        else:
+            return self.quantity * self.product.selling_price
 

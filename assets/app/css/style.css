@@ -19,3 +19,13 @@
  font-size: 24px;
  font-weight: bold;
 }
+
+
+.mycart-img span{
+    top: -6px;
+    right: -11px;
+    width: 20px;
+    height: 21px;
+    border-radius: 50%;
+    background-color: rgb(206, 68, 68);
+  }

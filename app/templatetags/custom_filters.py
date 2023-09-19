@@ -22,3 +22,18 @@ def cart_filter(value):
         cartcount=cart.objects.filter(user=value).count()
     return cartcount
 
+@register.simple_tag
+def total_checkoutPrice(value):
+    return value*100
+
+
+@register.simple_tag
+def discount_percentage(sellingPrice,discountedPrice):
+    if sellingPrice < discountedPrice:
+        return "error"
+    
+    discount=sellingPrice-discountedPrice
+    actual_discount=(discount * 100) / sellingPrice
+    actual_discount=round(actual_discount,1)
+    return actual_discount
+

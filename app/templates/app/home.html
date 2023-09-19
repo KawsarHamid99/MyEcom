@@ -1,5 +1,6 @@
 {% extends 'app/base.html' %}
 {% load static %}
+{% load custom_filters %}
 {% block title %}Home{% endblock title %}
 
 {% block banner_slider %}
@@ -107,12 +108,17 @@
                 <img src="{{product.product_image.url}}" style="width: 100%; height: 200px;" alt="Product image">
               </div>
               <div class="cart-item-info">
-                <p  class="fw-normal fs-6 text-dark text-truncate-2" style="margin: 0; height:45px;">{{product.title}}</p>
-                <p class="item-discounted-price font-monospace  text-start">$ {{product.discounted_price}}</p>
+                <p  class="fw-normal fs-6 text-dark text-uppercase text-truncate-2" style="margin: 0; height:45px;">{{product.title}}</p>
+                {% if product.discounted_price %}
+                <p class="item-discounted-price font-monospace  text-start" style="font-weight:600;"> ${{product.discounted_price}}</p>
                 <div class="d-flex justify-content-between">
-                  <p class="cart-item-price  font-monospace text-decoration-line-through text-muted text-start " style="margin:0; font-size: 15px;">$ {{product.selling_price}}</p>
-                  <span class="align-self-end font-monospace text-muted">-27%</span>
+                  <p class="cart-item-price  font-monospace text-decoration-line-through text-muted text-start " style="margin:0; font-size: 15px;">${{product.selling_price}}</p>
+                  <span class="align-self-end font-monospace " style="font-size: 13px;">-{% discount_percentage product.selling_price product.discounted_price %}%</span>
                 </div>
+                {% else %}
+                <p class="item-discounted-price font-monospace  pb-4 text-start" style="font-weight:600;">PRICE: ${{product.selling_price}}</p>
+                {% endif %}
+                
                 
               </div>
              
@@ -127,8 +133,8 @@
 
 <div class="container">
   <h3 class="text-uppercase">Categories</h3>
-  <div class=" d-flex justify-content-center">
-    <div class="d-flex flex-wrap">
+  <div class=" d-flex ">
+    <div class="d-flex justify-content-center flex-wrap">
       {% for category in categories %}
       {% if category.image  %}
       <a href="{% url 'category_based' category.id  %}" class="btn p-0 m-0">
@@ -150,14 +156,17 @@
 
 <div class="container ">
   <h3 class="mx-2 my-4 py-3">FEATURED PRODUCT</h3>
-  <div class="row">
+  <div class="row d-flex justify-content-center">
     {% for product in products %}
 
-        <div class = " col-6 col-md-4 col-lg-3 col-xl-2 p-2 border border-light best">
+        <div class = "  col-6 col-md-4 col-lg-3 col-xl-2 shadow m-2 p-2 border border-light best">
           <a href="{% url 'product-detail' product.id %}" class="btn m-0 p-0" style="padding: 0; margin: 0;">
           <div class = "collection-img position-relative">
               <img src = "{{product.product_image.url}}" style="width:100% !important; height: 220px;">
-              <span class = "position-absolute text-white d-flex align-items-center justify-content-center" style="background-color: #8b7d3c; font-size: 10px; font-weight: bold;">-25%</span>
+              {% if product.discounted_price %}
+              <span class = "position-absolute text-white d-flex align-items-center justify-content-center" style="background-color: #8b7d3c; font-size: 10px; font-weight: bold;">-{% discount_percentage product.selling_price product.discounted_price %}%</span>
+              {% endif %}
+              
           </div>
           <div class = "text-center">
               <div class = "rating mt-3">
@@ -168,27 +177,15 @@
                   <span class = "text-primary"><i class = "fas fa-star " style="color: #8b7d3c;"></i></span>
               </div>
               <p class = "text-capitalize my-1 text-truncate-2"  style=" height:45px;">{{product.title}}</p>
-              <span class = "fw-bold">Price $.{{product.discounted_price}}</span>
+              {% if product.discounted_price %}
+                <span class = "fw-bold">Price:  ${{product.discounted_price}}</span>
+              {% else %}
+              <span class = "fw-bold">Price:  ${{product.selling_price}}</span>
+              {% endif %}
           </div>
         </a>
         </div>
-      
-
-          <!-- <div class="cart-item m-0">
-              <div class="cart-item-image">
-                <img src="{{product.product_image.url}}" style="width: 100%; height: 200px;" alt="Product image">
-              </div>
-              <div class="cart-item-info">
-                <p  class="fw-normal fs-6 text-dark text-truncate-2" style="margin: 0; height:45px;">{{product.title}}</p>
-                <p class="item-discounted-price font-monospace  text-start">$ {{product.discounted_price}}</p>
-                <div class="d-flex justify-content-between">
-                  <p class="cart-item-price  font-monospace text-decoration-line-through text-muted text-start " style="margin:0; font-size: 15px;">$ {{product.selling_price}}</p>
-                  <span class="align-self-end font-monospace text-muted">-27%</span>
-                </div>
-                
-              </div>
-             
-            </div> -->
+    
 
     {% endfor %}
 

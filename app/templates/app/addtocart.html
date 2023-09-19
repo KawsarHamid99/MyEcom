@@ -12,6 +12,7 @@
   <div class="card">
    <div class="card-body">
     <h3>Cart</h3>
+    
     {% for item in cart %}
     <hr class="text-muted">
     <div class="row">
@@ -30,7 +31,11 @@
 
        <div class="d-flex justify-content-between">
         <a href="#" class="btn btn-sm btn-secondary mr-3 remove-cart" pid="{{item.product.id}}">Remove item </a>
-        <p class="mb-0"><span><strong id="total_costs">TK. {{item.product.discounted_price}}</strong></span></p>
+        {% if item.product.discounted_price %}
+        <p class="mb-0"><span><strong id="total_costs"> ${{item.product.discounted_price}}</strong></span></p>
+        {% else %}
+        <p class="mb-0"><span><strong id="total_costs"> ${{item.product.selling_price}}</strong></span></p>
+        {% endif %}
        </div>
       </div>
      </div>

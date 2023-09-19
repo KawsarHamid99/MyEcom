@@ -10,8 +10,8 @@ from django.urls import re_path
 from django.views.static import serve
 urlpatterns = [
 
-    #re_path(r'^media/(?P<path>.*)$',serve,{'document_root': settings.MEDIA_ROOT}),
-    #re_path(r'^static/(?P<path>.*)$',serve,{'document_root': settings.STATIC_ROOT}),
+    re_path(r'^media/(?P<path>.*)$',serve,{'document_root': settings.MEDIA_ROOT}),
+    re_path(r'^static/(?P<path>.*)$',serve,{'document_root': settings.STATIC_ROOT}),
 
     path('', views.ProductView.as_view(),name="home"),
     path('product-detail/<int:id>/', views.ProductDetailsView.as_view(), name='product-detail'),
