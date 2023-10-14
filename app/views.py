@@ -1,4 +1,4 @@
-from django.shortcuts import render,HttpResponseRedirect,redirect
+from django.shortcuts import render,HttpResponseRedirect,redirect,HttpResponse
 from  .models import Customer,Product,cart,OrderPlaced,Category
 from django.views import View
 from django.contrib import messages
@@ -341,3 +341,13 @@ def aboutus(request):
 
 def customersupport(request):
  return render(request,"app/customersupport.html")
+
+
+def test(request):
+ order=OrderPlaced.objects.filter(user=request.user)
+
+ print("-----------------------------------")
+ print(request.user)
+ print(order)
+#  print(order[0].customer.id)
+ return HttpResponse("Under testing")
