@@ -63,13 +63,45 @@ class MyPasswordSetForm(SetPasswordForm):
 class CustomerProfileForm(forms.ModelForm):
     class Meta:
         model=Customer
-        fields=["name","locality","city","state","zipcode"]
+        fields=["name","address","city","state","zipcode"]
         widgets={
             'name':forms.TextInput(attrs={'class':'form-control'}),
-            'locality':forms.TextInput(attrs={'class':'form-control'}),
+            'address':forms.TextInput(attrs={'class':'form-control'}),
             'city':forms.TextInput(attrs={'class':'form-control'}),
             'state':forms.Select(attrs={'class':'form-control'}),
             'zipcode':forms.NumberInput(attrs={'class':'form-control'})
         }
 
 
+class EditUserProfileForm(UserChangeForm):
+    password=None
+    email=forms.EmailField(required=True,widget=forms.TextInput(attrs={'class':'form-control'}))
+    class Meta:
+        model=User
+        fields=["username","first_name","last_name","email"]
+        widgets={
+            "username":forms.TextInput(attrs={'class':'form-control'}),
+            "first_name":forms.TextInput(attrs={'class':'form-control'}),
+            "last_name":forms.TextInput(attrs={'class':'form-control',"requred":'required'}),
+            "email":forms.TextInput(attrs={'class':'form-control',"requred":'required'}),
+        }
+
+
+class CustomerAddresUpdateForm(forms.ModelForm):
+    # user=forms.CharField(max_length=100,widget=forms.TextInput(attrs={'disabled':'disabled'}))
+    contact_no=forms.CharField(required=True,widget=forms.TextInput(attrs={'class':'form-control'}))
+    class Meta:
+        model=Customer
+        fields="__all__"
+        exclude=["user"]
+        widgets={
+            'name':forms.TextInput(attrs={'class':'form-control'}),
+            'address':forms.TextInput(attrs={'class':'form-control'}),
+            'zipcode':forms.NumberInput(attrs={'class':'form-control'}),
+            'state':forms.Select(attrs={'class':'form-control'}),
+            'city':forms.TextInput(attrs={'class':'form-control'}),
+        }
+        
+    # def __init__(self,*args,**kwargs):
+    #     super(CustomerAddresUpdateForm,self).__init__(*args,**kwargs)
+    #     self.fields["user"].widget.attrs['disabled']=True

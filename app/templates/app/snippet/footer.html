@@ -1,40 +1,61 @@
 {% load static %}
-
+{% load custom_filters %}
 <div class=" container-fluid text-center text-white pt-5 mb-0 pb-0 " style="background-color: rgb(84, 81, 61);">
     <div class="row footer">
         <div class="col-lg-3 col-md-6 ">
-            <h4>About Us</h4>
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+            <a href="{% url 'aboutus' %}" target="_blank" class="btn text-white">
+                <h4>About Us</h4>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+            </a>
         </div>
         <div class="col-lg-3 col-md-6 ">
             <h4>Customer Service</h4>
             <ul class="list-unstyled">
-                <li><a href="#" class="text-white">Contact Us</a></li>
-                <li><a href="#" class="text-white">Shipping & Returns</a></li>
-                <li><a href="#" class="text-white">Privacy Policy</a></li>
+                <li><a href="{% url 'customersupport' %}"  target="_blank" class="text-white">Contact Us</a></li>
+                <li><a href="{% url 'shippingandreturn' %}" target="_blank" class="text-white">Shipping & Returns</a></li>
+                <li><a href="{% url 'privacyPolicy' %}" target="_blank" class="text-white">Privacy Policy</a></li>
             </ul>
         </div>
         <div class="col-lg-3 col-md-6  ">
             <h4>Categories</h4>
             <ul class="list-unstyled">
-                <li><a href="#" class="text-white">Clothing</a></li>
-                <li><a href="#" class="text-white">Electronics</a></li>
-                <li><a href="#" class="text-white">Accessories</a></li>
+                {% for item in request.user|filter_category %}                
+                <li><a href="{% url 'category_based' item.id  %}" class="text-white text-uppercase btn m-0 p-0">{{item.name}}</a></li>
+                {% endfor %}
+                
             </ul>
         </div>
         <div class="col-lg-3 col-md-6  ">
-            <h4>Follow Us</h4>
-            <p>Stay updated on social media:</p>
-            <div class="d-flex">
-                <a href="#" class="me-2"><i class="bi bi-facebook"></i></a>
-                <a href="#" class="me-2"><i class="bi bi-twitter"></i></a>
-                <a href="#" class="me-2"><i class="bi bi-instagram"></i></a>
+            <h4 class="text-center">Follow Us</h4>
+            <p class="text-center"> Stay updated on social media:</p>
+            <div>
+                <ul class="list-unstyled d-flex justify-content-center ">
+                    <li>
+                        <a href="" class="text-white text-decoration-none text-muted fs-4 mx-3">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        
+                    </li>
+                    <li>
+                        <a href="" class="text-white text-decoration-none text-muted fs-4 mx-3">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        
+                    </li>
+                    <li>
+                        <a href="" class="text-white text-decoration-none text-muted fs-4 mx-3">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        
+                    </li>
+
+                </ul>
             </div>
         </div>
     </div>
     
     <div class="class mb-0 pb-2">
-        <small class="text-white mycontainer-fluid   text-center p-2 ">Copyright &copy; 2023 || Designed By HK-Solution LTD. || </small>
+        <small class="text-white mycontainer-fluid   text-center p-2 "><a href="https://www.linkedin.com/in/kawsar-hamid-6b6a86241/" class="text-white btn p-0 m-0">Copyright &copy; 2023 || Designed By HK-Solution LTD. ||</a> </small>
         <img src="/static/app/images/payment.png" alt="" srcset="" class="img-fluid" height="2px">
     </div>
 </div>

@@ -159,7 +159,7 @@
   <div class="row d-flex justify-content-center">
     {% for product in products %}
 
-        <div class = "  col-6 col-md-4 col-lg-3 col-xl-2 shadow m-2 p-2 border border-light best">
+        <div class = "  col-6 col-md-4 col-lg-3 col-xl-2 shadow m-2 p-2 d-flex justify-content-center  best">
           <a href="{% url 'product-detail' product.id %}" class="btn m-0 p-0" style="padding: 0; margin: 0;">
           <div class = "collection-img position-relative">
               <img src = "{{product.product_image.url}}" style="width:100% !important; height: 220px;">

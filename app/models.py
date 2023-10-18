@@ -50,9 +50,9 @@ STATE_CHOICE=(
 
 
 STATUS_CHOICE=(
+    ('Placed','Placed'),
     ('Accepted','Accepted'),
-    ('Packed','Packed'),
-    ('On The Way','On The Way'),
+    ('Shipped','Shipped'),
     ('Delivered','Delivered'),
     ('Cancel','Cancel')
 )
@@ -131,7 +131,8 @@ class Brand(models.Model):
 class Customer(models.Model):
     user=models.ForeignKey(User,on_delete=models.CASCADE)
     name=models.CharField(max_length=100)
-    locality=models.CharField(max_length=100)
+    contact_no=models.CharField(max_length=100,null=True,blank=True)
+    address=models.CharField(max_length=100)
     city=models.CharField(max_length=100)
     zipcode=models.IntegerField()
     state=models.CharField(choices=STATE_CHOICE,max_length= 50)
@@ -148,6 +149,7 @@ class Product(models.Model):
     brand=models.ForeignKey(Brand,on_delete=models.DO_NOTHING,null=True,blank=True)
     category = models.ForeignKey(Category, on_delete=models.DO_NOTHING,null=True,blank=True)
     product_image=models.ImageField(upload_to="productimg")
+    key_word=models.CharField(max_length=1000,null=True,blank=True)
 
     class Meta:
         ordering = ('title',)
@@ -170,17 +172,24 @@ class cart(models.Model):
         return str(self.id)
     
 class OrderPlaced(models.Model):
-    user=models.ForeignKey(User,on_delete=models.CASCADE)
-    customer=models.ForeignKey(Customer,on_delete=models.CASCADE)
-    product=models.ForeignKey(Product,on_delete=models.CASCADE)
+    orderid=models.CharField(max_length=10000,null=True,blank=True)
+    trcking_id=models.CharField(max_length=100,null=True,blank=True)
+    user=models.ForeignKey(User,on_delete=models.DO_NOTHING)
+    customer=models.ForeignKey(Customer,on_delete=models.DO_NOTHING)
+    product=models.ForeignKey(Product,on_delete=models.DO_NOTHING)
+    price_per_unit=models.FloatField(blank=True,null=True)
     quantity=models.PositiveIntegerField()
+    address=models.CharField(max_length=500,null=True,blank=True)
     orderd_date=models.DateTimeField(auto_now_add=True)
     status=models.CharField(choices=STATUS_CHOICE,max_length=100,default="orderd_date")
 
+    def save(self,*args,**kwargs):
+        super().save(*args,**kwargs)
+        OrderPlaced.objects.filter(orderid=self.orderid).update(status=self.status,trcking_id=self.trcking_id)
+
     @property
     def total_cost(self):
-        if self.product.discounted_price:
-            return self.quantity * self.product.discounted_price
-        else:
-            return self.quantity * self.product.selling_price
+        return self.price_per_unit * self.quantity
+    
+
 

@@ -1,41 +1,138 @@
-{% extends 'app/base.html' %}
+{% extends 'app/base2.html' %}
 {% load static %}
-{% block title %}Profile{% endblock title %}
-{% block main-content %}
-<div class="container my-5">
- <div class="row">
-  <h3>Welcome <span class="text-capitalize">{{request.user}}</span></h3>
-  <div class="col-sm-2 border-end">
-   <ul class="list-unstyled">
-    <li class="d-grid"><a href="{% url 'profile' %}" class="btn {{active}}">Profile</a></li>
-    <li class="d-grid"><a href="{% url 'address' %}" class="btn ">Address</a></li>
-   </ul>
-  </div>
-  <div class="col-sm-8 offset-sm-1">
-   <form action="" method="post" novalidate class="shadow p-5">
-    {% if messages %}
-    {% for message in messages %}
-      <p {% if message.tags %} class="alert alert-{{message.tags}} mb-2 text-center" {% endif %}>{{message}}</p>
-    {% endfor %}
-    {% endif %}
-    {% csrf_token %}
-
-    {% for fm in form %}
-    <div class="form-group mb-3">
-      {{fm.label_tag}}{{fm}} <small class="text-danger">{{fm.errors|striptags}}</small>
+{% load custom_filters %}
+{% block title %} PROFILE {% endblock title %}
+{% block main-block-content %}
+<div class="col-lg-8">
+    <div class="card mb-4">
+      <div class="card-body">
+        <div class="row">
+          <div class="col-sm-3">
+            <p class="mb-0">Username</p>
+          </div>
+          <div class="col-sm-9">
+            <p class="text-muted mb-0">{{user.username}}</p>
+          </div>
+        </div>
+        <hr>
+        <div class="row">
+          <div class="col-sm-3">
+            <p class="mb-0">First Name</p>
+          </div>
+          <div class="col-sm-9">
+            <p class="text-muted mb-0">{% if not user.first_name %} <i>NULL</i> {% else %} {{user.first_name}} {% endif %}</p>
+          </div>
+        </div>
+        <hr>
+        <div class="row">
+          <div class="col-sm-3">
+            <p class="mb-0">Last Name</p>
+          </div>
+          <div class="col-sm-9">
+            <p class="text-muted mb-0">{% if not user.last_name %} <i>NULL</i> {% else %} {{user.last_name}} {% endif %}</p>
+          </div>
+        </div>
+        <hr>
+        <div class="row">
+          <div class="col-sm-3">
+            <p class="mb-0">Email</p>
+          </div>
+          <div class="col-sm-9">
+            <p class="text-muted mb-0">{{user.email}}</p>
+          </div>
+        </div>
+        <hr>
+        
+        
+      </div>
     </div>
-    {% endfor %}
-  
-    <div class="col-12 mt-3">
-      <button type="submit" class="btn btn-primary">Submit</button>
-    </div><br>
-    {% if form.non_field_errors %}
-    {% for error in form.non_field_errors %}
-    <p class="alert alert-danger my-3">{{error}}</p>
-    {% endfor %}
+    <div class="row bg-white d-flex justify-content-center m-1 py-md-2 rounded border border-light">
+      <div class="text-center text-muted">
+          <h3 class="">SHIPPING ADDRESS LIST</h3>
+          <p class="text-uppercase t"><i style="font-size: 13px;">-you can add atmost <b>four</b> shipping address</i></p>
+      </div>
+
+      {% if address %}
+      {% for address in address  %}
+      <div class="col-md-5 shadow-sm m-2 text-uppercase"  style="border: 1px solid rgb(237, 226, 226);">
+          <h5 class="text-muted text-center">ADDRESS {{forloop.counter}}</h5>
+          <div>
+              <hr class="p-0 m-0">
+              <div class="row">
+                  <div class="col col-md-4 col-xl-3  ">
+                      <div>NAME:</div>
+                  </div>
+                  <div class="col ">
+                      <div> {{address.name}}</div>
+                  </div>
+              </div><hr class="p-0 m-0">
+              <div class="row">
+                  <div class="col col-md-3 ">
+                      <div>Phone:</div>
+                  </div>
+                  <div class="col">
+                      <div>{{address.contact_no}}</div>
+                  </div>
+              </div><hr class="p-0 m-0">
+              <div class="row">
+                  <div class="col col-3">
+                      <div>City:</div>
+                  </div>
+                  <div class="col ">
+                      <div>{{address.city}}</div>
+                  </div>
+              </div>
+              <hr class="p-0 m-0">
+              <div class="row">
+                <div class="col col-3">
+                    <div>STATE:</div>
+                </div>
+                <div class="col ">
+                    <div>{{address.state}}</div>
+                </div>
+            </div>
+            <hr class="p-0 m-0">
+            <div class="row">
+              <div class="col col-3">
+                  <div>ZIP:</div>
+              </div>
+              <div class="col ">
+                  <div>{{address.zipcode}}</div>
+              </div>
+          </div>
+            <hr class="p-0 m-0">
+            <div class="row">
+              <div class="col col-3">
+                  <div>Address:</div>
+              </div>
+              <div class="col ">
+                  <div>{{address.address}}</div>
+              </div>
+          </div>
+          
+          <hr class="p-0 m-0">
+              <div class="col py-2 d-flex justify-content-end">
+                  <a href="{% url 'UserAdress' address.id %}" class="btn btn-info p-1 mx-1">EDIT</a>
+                  <a href="{% url 'UserAddressDelete' address.id %}" class="btn btn-danger p-1 mx-1">DELETE</a>
+
+                  
+              </div> 
+          </div>
+      </div>
+      {% endfor %}
+      <hr class="py-1 my-2">
+      {% endif %}
+    
+    {% if request.user|addresscount %}
+    <div class="d-flex justify-content-center">
+      <a href="{% url 'AddUserAdress' %}" class="btn text-white " style="background: #724ff1  !important; font-weight: 600;">ADD NEW ADDRESS</a>
+    </div>
+    {% else %}
+    <p class="text-center text-danger text-uppercase">can not add more then 4 shipping address</p>
     {% endif %}
-   </form>
+      
+
+    </div>
   </div>
- </div>
-</div>
-{% endblock main-content %}
+
+{% endblock main-block-content %}

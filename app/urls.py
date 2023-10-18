@@ -40,6 +40,7 @@ urlpatterns = [
         authentication_form=UserLoginForm), name='login-account'),
     #path('login/', views.UserLoginView.as_view(), name='login'),
     path('logout/',auth_view.LogoutView.as_view(next_page='login'),name="logout"),
+    path('EditUser/',views.EditUserProfileView.as_view(),name="EditUser"),
 
     path('changepassword/', auth_view.PasswordChangeView.as_view(template_name="app/changepassword.html",
     form_class=MyPasswordChangeForm,success_url="/passwordchangedone/"),name='changepassword'),
@@ -64,4 +65,17 @@ urlpatterns = [
     path('aboutus/', views.aboutus, name='aboutus'),
     path('customersupport/', views.customersupport, name='customersupport'),
     path('test/', views.test, name='test'),
+
+
+    path('AddUserAdress/',views.AddUserAdressView.as_view(),name="AddUserAdress"),
+    path('UserAdress/<int:pk>',views.EditUserAdressView.as_view(),name="UserAdress"),
+    path('UserAddressDelete/<int:pk>',views.UserAddressDelete,name="UserAddressDelete"),
+
+    path('TrackMyOrder/',views.orders,name="TrackMyOrder"),
+    path('track_order_details/<int:orderid>',views.track_order_details,name="track_order_details"),
+    
+    path("searchresult/",views.searchproduct,name="searchresult"),
+    path("privacyPolicy/",views.privacyPolicy,name="privacyPolicy"),
+    path("shippingandreturn/",views.shippingandreturn,name="shippingandreturn"),
+    
 ]+static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)

@@ -4,7 +4,7 @@ from .models import Product,cart,Customer,OrderPlaced,Brand
 
 @admin.register(Product)
 class AdminProduct(admin.ModelAdmin):
-    list_display=['id','title','selling_price','discounted_price','description','brand','category','product_image']
+    list_display=['id','title','selling_price','discounted_price','description','brand','category','key_word','product_image']
 
 @admin.register(cart)
 class AdminCart(admin.ModelAdmin):
@@ -12,11 +12,11 @@ class AdminCart(admin.ModelAdmin):
 
 @admin.register(Customer)
 class CustomerAdmin(admin.ModelAdmin):
-    list_display=['id','user','name','locality','city','zipcode','state']
+    list_display=['id','user','name','address','city','zipcode','state']
 
 @admin.register(OrderPlaced)
 class OrderAdmin(admin.ModelAdmin):
-    list_display=['id','user','customer','product','quantity','orderd_date','status']
+    list_display=['id',"orderid",'trcking_id','user','customer','product','quantity','price_per_unit','address','orderd_date','status']
 
 @admin.register(Brand)
 class BrandAdmin(admin.ModelAdmin):

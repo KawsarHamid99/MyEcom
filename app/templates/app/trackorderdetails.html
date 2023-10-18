@@ -1,0 +1,107 @@
+{% extends "app/base2.html" %}
+{% load static %}
+{% load custom_filters %}
+
+{% block main-block-content %}
+
+<div class="col-lg-8 my-lg-0 my-1">
+    <div id="main-content" class="bg-white border">
+        <div class="d-flex flex-column">
+            <div class="h5">Hello {{request.user}},</div>
+            <div>Logged in as: {{request.user.email}}</div>
+        </div>
+        <div class="d-flex my-4 flex-wrap">
+            <div class="box me-4 my-1 bg-light">
+                <img src="https://www.freepnglogos.com/uploads/box-png/cardboard-box-brown-vector-graphic-pixabay-2.png"
+                    alt="">
+                <div class="d-flex align-items-center mt-2">
+                    <div class="tag">Orders placed</div>
+                    <div class="ms-auto number">{{Orders_placed}}</div>
+                </div>
+            </div>
+            <div class="box me-4 my-1 bg-light">
+                <img src="https://www.freepnglogos.com/uploads/shopping-cart-png/shopping-cart-campus-recreation-university-nebraska-lincoln-30.png"
+                    alt="">
+                <div class="d-flex align-items-center mt-2">
+                    <div class="tag">Items in Cart</div>
+                    {% if request.user.is_authenticated %}
+                    {% cart_filter request.user as cartcount %}
+                    {% if cartcount %}
+                    <div class="ms-auto number">{{cartcount}}   </div>
+                    {% else %}
+                    <div class="ms-auto number">0</div>
+                    {% endif %}
+                    {% endif %}
+                </div>
+            </div>
+            <!-- <div class="box me-4 my-1 bg-light">
+                <img src="https://www.freepnglogos.com/uploads/love-png/love-png-heart-symbol-wikipedia-11.png"
+                    alt="">
+                <div class="d-flex align-items-center mt-2">
+                    <div class="tag">Wishlist</div>
+                    <div class="ms-auto number">10</div>
+                </div>
+            </div> -->
+        </div>
+        <div class="text-uppercase">Order details</div>
+        <div class="order my-3 bg-light">
+            <div class="row">
+                <div class="col-lg-6 ">
+                    <div class="d-flex flex-column justify-content-start order-summary">
+                        <div class="d-flex align-items-center overflow-auto">
+                            <div class="text-uppercase">#{{order_info.orderid}}</div>
+                            <div class="blue-label ms-auto text-uppercase">paid</div>
+                        </div>
+                        <div class="fs-8 ">Products #{{total}}</div>
+                        <div class="fs-8 ">{{order_info.orderd_date}}</div>
+                        <!-- <div class="rating d-flex align-items-center pt-1">
+                            <img src="https://www.freepnglogos.com/uploads/like-png/like-png-hand-thumb-sign-vector-graphic-pixabay-39.png"
+                                alt=""><span class="px-2">Rating:</span>
+                            <span class="fas fa-star"></span>
+                            <span class="fas fa-star"></span>
+                            <span class="fas fa-star"></span>
+                            <span class="fas fa-star"></span>
+                            <span class="far fa-star"></span>
+                        </div> -->
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="d-sm-flex align-items-sm-start justify-content-sm-between">
+                       
+                        <div class="status ">Status : {{order_info.status}}</div>
+                    </div>
+                </div>
+            </div>
+            <hr>
+            <div class="overflow-auto">
+                <table class="table table-striped table-hover">
+                    <thead>
+                      <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Image</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">quantity</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                        {% for product in order_list %}
+                      <tr>
+                        <th scope="row">{{forloop.counter}}</th>
+                        <td><img src="{{product.product.product_image.url}}" alt="not found" style="width: 80px"></td>
+                        <td>{{product.product}}</td>
+                        <td>{{product.quantity}}</td>
+                      </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+            </div>
+        </div>
+
+        <a href="{% url 'TrackMyOrder' %}" class="btn text-white" style="background-color: rgb(98, 16, 175); font-weight: 500;">BACK</a>
+        
+    </div>
+</div>
+
+{% endblock main-block-content %}
+
+
