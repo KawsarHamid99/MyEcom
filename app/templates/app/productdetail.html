@@ -19,7 +19,39 @@
    {% else %}
    <h4>${{product.selling_price}}</h4> <br>
    {% endif %}
-
+   <div class="row">
+    {% if product.size.all %}
+    <div class="col col-md-3 d-flex ">
+        <div class="fs-5  text-muted me-2  " > SIZE: </div>
+        <select class="form-select mb-md-3   " name="size" aria-label="Default select example" style="width: 100%;" required>
+            {% for size in product.size.all %}
+                <option value="{{size.id}}">{{size.shortform}}</option>    
+            {% endfor %}
+            
+          </select>
+    </div>
+   {% endif %}
+   </div>
+   {% if product.color.all %}
+   <div class="row d-flex border ">
+    <div class="col d-flex ">
+        <div class="fs-5  text-muted me-2 " > COLOR: </div>
+            <div class=" mx-2 ">
+                <div class="form-group  row  d-flex justify-content-center">
+                    {% for color in product.color.all %}
+                    <div class="  m-1 px-2 "  style=" border-radius: 20% !important; width: fit-content; background-color: {{color.color_code}};  ">
+                        <input type="radio" id="colorOption1" name="color"  class="" checked >
+                        <label class="text-white "  for="colorOption1">{{color.name}}</label>
+                    </div>
+                    {% endfor %}
+                    
+                    <!-- Add more color options as needed -->
+                </div>
+            </div>
+    </div>
+   </div>
+   {% endif %}
+   <hr>
    {% if  request.user.is_authenticated %}
    {% if not item_already_in_cart %}
     <form action="/cart" method="get" class="d-inline">

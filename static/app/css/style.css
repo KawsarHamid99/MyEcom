@@ -29,3 +29,10 @@
     border-radius: 50%;
     background-color: rgb(206, 68, 68);
   }
+
+  @media screen and (min-width: 200px) and (max-width: 380px){
+    .btn{
+      display: contents !important;
+      
+    }
+  }

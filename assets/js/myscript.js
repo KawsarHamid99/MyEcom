@@ -88,3 +88,16 @@ $('.remove-cart').click(function(){
         }
     })
 })
+
+
+
+$('#demo').click(function(){
+    console.log("hello world")
+    $('input[type="radio"]').on('click', function() {
+    // Check which radio button is selected
+    var selectedColor = $('input[name="color"]:checked').val();
+
+    // Use the selectedColor as needed
+    console.log("Selected color: " + selectedColor)
+    })
+})

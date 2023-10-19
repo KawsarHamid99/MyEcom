@@ -125,6 +125,10 @@ def address(request):
 def add_to_cart(request):
  user=request.user
  product_id=request.GET.get("prod_id")
+
+ radiocolorname=request.GET.get('color')
+ print(f'---------------------------->>>>>>>>>>>>>>>-----------{radiocolorname}')
+ print(radiocolorname)
  product=Product.objects.get(id=product_id)
  if not cart.objects.filter(user=user,product=product).exists():
   cart(user=user,product=product).save()

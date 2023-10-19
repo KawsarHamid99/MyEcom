@@ -1,10 +1,19 @@
 from django.contrib import admin
-from .models import Product,cart,Customer,OrderPlaced,Brand
+from .models import Product,cart,Customer,OrderPlaced,Brand,Productcolor,ProductSize
 # Register your models here.
+
+@admin.register(Productcolor)
+class ProductcolorAdmin(admin.ModelAdmin):
+    list_display=['id','name','color_code']
+
+@admin.register(ProductSize)
+class ProductSizeAdmin(admin.ModelAdmin):
+    list_display=['id','name','shortform']
+
 
 @admin.register(Product)
 class AdminProduct(admin.ModelAdmin):
-    list_display=['id','title','selling_price','discounted_price','description','brand','category','key_word','product_image']
+    list_display=['id','title','selling_price','discounted_price','size_list','color_list','brand','category','key_word','product_image']
 
 @admin.register(cart)
 class AdminCart(admin.ModelAdmin):

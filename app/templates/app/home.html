@@ -45,6 +45,32 @@
     height: 35px;
     border-radius: 50%;
   }
+
+  @media screen and (min-width: 200px) and (max-width: 380px){
+    .mycarouseldisplay{
+      display: contents !important;
+      
+    }
+  }
+
+  @media screen and (min-width: 240px) and (max-width: 319px){
+    .mycarouseldisplaymargin{
+      
+      margin-left: 15% !important;
+      margin-right: 20px !important;
+      
+    }
+    .owl-carousel{
+      width: 70%;
+    }
+
+    .mycarouseldisplay{
+      display: contents !important;
+      
+    }
+
+  }
+  
 </style>
 
 
@@ -80,8 +106,8 @@
 {% block livesale %}
 <!-- Live Sale Section -->
 <div class="container">
-  <div class="row  text-center p-5 text-white border-bottom shadow" style="background-color:  rgb(100, 98, 84);;">
-    <h1>SALE IS LIVE NOW</h1>
+  <div class="row  text-center p-0 p-md-5 text-white border-bottom shadow" style="background-color:  rgb(100, 98, 84);;">
+    <p class=" fs-3 fs-md-6 text-bolder" style="font-weight: 500;">SALE IS LIVE NOW</p>
     <span>5% Instant Discount on Axis Bank Credit and Debit Card</span>
     <small class="fw-lighter">Term and Condition Applied (For details visit Bank's official Website)</small>
   </div>
@@ -98,10 +124,10 @@
 <div class="mt-3 xm-2 mb-0">
  <h2>ShoppingX Deals of The Day</h2>
  <!-- Slider 1 -->
- <div class="owl-carousel m-0" id="slider1">
+ <div class="owl-carousel m-0 mycarouseldisplaymargin" id="slider1">
   {% for product in products %}
 
-  <a href="{% url 'product-detail' product.id %}" class="btn cart">
+  <a href="{% url 'product-detail' product.id %}" class="btn cart mycarouseldisplay" >
  
           <div class="cart-item m-0">
               <div class="cart-item-image">
@@ -132,12 +158,12 @@
 
 
 <div class="container">
-  <h3 class="text-uppercase">Categories</h3>
+  <h3 class="text-uppercase text-center ">Categories</h3>
   <div class=" d-flex ">
-    <div class="d-flex justify-content-center flex-wrap">
+    <div class="d-flex justify-content-center flex-wrap" style="max-height: 400px; overflow:auto;">
       {% for category in categories %}
       {% if category.image  %}
-      <a href="{% url 'category_based' category.id  %}" class="btn p-0 m-0">
+      <a href="{% url 'category_based' category.id  %}" class="btn p-0 m-0" >
         <div class=" p-2 border border-light bg-light">
           {% if category.image %}
           <img src="{{category.image.url}}" style="height: 120px; width: 120px;" alt="">
@@ -159,7 +185,7 @@
   <div class="row d-flex justify-content-center">
     {% for product in products %}
 
-        <div class = "  col-6 col-md-4 col-lg-3 col-xl-2 shadow m-2 p-2 d-flex justify-content-center  best">
+        <div class = "  col-5  col-md-4 col-lg-3 col-xl-2 m-1 shadow m-md-2  p-md-2 d-flex justify-content-center  best">
           <a href="{% url 'product-detail' product.id %}" class="btn m-0 p-0" style="padding: 0; margin: 0;">
           <div class = "collection-img position-relative">
               <img src = "{{product.product_image.url}}" style="width:100% !important; height: 220px;">
@@ -274,12 +300,12 @@
 <!-- End Payment Info Section -->
 
 <!-- 3st Product Slider -->
-<div class="m-3">
+<div class=" m-1 my-3 mx-md-3">
   <h2>ONLY FOR YOU</h2>
   <!-- Slider 3 -->
-  <div class="owl-carousel" id="slider3">
+  <div class="owl-carousel mycarouseldisplaymargin" id="slider3">
    {% for product in topwares %}
-   <a href="{% url 'product-detail' product.id %}" class="btn cart">
+   <a href="{% url 'product-detail' product.id %}" class="btn cart mycarouseldisplay">
  
     <div class="cart-item">
         <div class="cart-item-image">

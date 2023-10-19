@@ -63,6 +63,19 @@ class States_choice(models.Model):
     zipcode=models.PositiveIntegerField()
     
 
+class ProductSize(models.Model):
+    name=models.CharField(max_length=100,null=True,blank=True,unique=True)
+    shortform=models.CharField(max_length=100,null=True,blank=True,unique=True)
+
+    def __str__(self):
+        return str(self.name)
+
+class Productcolor(models.Model):
+    name=models.CharField(max_length=100,null=True,blank=True,unique=True)
+    color_code=models.CharField(max_length=100,null=True,blank=True,unique=True)
+
+    def __str__(self):
+        return str(self.name)
 
 
 
@@ -148,11 +161,21 @@ class Product(models.Model):
     description=models.TextField()
     brand=models.ForeignKey(Brand,on_delete=models.DO_NOTHING,null=True,blank=True)
     category = models.ForeignKey(Category, on_delete=models.DO_NOTHING,null=True,blank=True)
+    size=models.ManyToManyField(ProductSize,blank=True)
+    color=models.ManyToManyField(Productcolor,blank=True)
     product_image=models.ImageField(upload_to="productimg")
     key_word=models.CharField(max_length=1000,null=True,blank=True)
 
+    
+
     class Meta:
         ordering = ('title',)
+
+    def size_list(self):
+        return ",".join([str(p) for p in self.size.all()])
+    
+    def color_list(self):
+        return ",".join([str(p) for p in self.color.all()])
 
     def __str__(self):
         return str(self.title)
@@ -190,6 +213,7 @@ class OrderPlaced(models.Model):
     @property
     def total_cost(self):
         return self.price_per_unit * self.quantity
-    
+
+
 
 
