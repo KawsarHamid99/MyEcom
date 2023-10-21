@@ -93,5 +93,4 @@ def ordertrackingid(orderid):
 @register.filter
 def filter_category(userid):
     category=Category.objects.filter(parent__isnull=True)
-    print(f'------------------------------------>>>>>>>>>>>>>>>{category}')
     return category

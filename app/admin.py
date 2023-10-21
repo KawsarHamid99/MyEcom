@@ -17,7 +17,7 @@ class AdminProduct(admin.ModelAdmin):
 
 @admin.register(cart)
 class AdminCart(admin.ModelAdmin):
-    list_display=['id','user','product','quantity']
+    list_display=['id','user','product','size','color','quantity']
 
 @admin.register(Customer)
 class CustomerAdmin(admin.ModelAdmin):
@@ -25,7 +25,7 @@ class CustomerAdmin(admin.ModelAdmin):
 
 @admin.register(OrderPlaced)
 class OrderAdmin(admin.ModelAdmin):
-    list_display=['id',"orderid",'trcking_id','user','customer','product','quantity','price_per_unit','address','orderd_date','status']
+    list_display=['id',"orderid",'trcking_id','customer','product','quantity','price_per_unit','size','color','address','orderd_date','status']
 
 @admin.register(Brand)
 class BrandAdmin(admin.ModelAdmin):

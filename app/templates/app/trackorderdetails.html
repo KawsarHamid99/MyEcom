@@ -81,6 +81,8 @@
                         <th scope="col">Image</th>
                         <th scope="col">Name</th>
                         <th scope="col">quantity</th>
+                        <th scope="col">size</th>
+                        <th scope="col">color</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -90,6 +92,8 @@
                         <td><img src="{{product.product.product_image.url}}" alt="not found" style="width: 80px"></td>
                         <td>{{product.product}}</td>
                         <td>{{product.quantity}}</td>
+                        <td>{{product.size}}</td>
+                        <td>{{product.color}}</td>
                       </tr>
                       {% endfor %}
                     </tbody>

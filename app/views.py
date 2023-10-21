@@ -1,5 +1,5 @@
 from django.shortcuts import render,HttpResponseRedirect,redirect,HttpResponse
-from  .models import Customer,Product,cart,OrderPlaced,Category
+from  .models import Customer,Product,cart,OrderPlaced,Category,Productcolor,ProductSize
 from django.views import View
 from django.contrib import messages
 from .forms import CustomerRegistrationForm,UserLoginForm,CustomerProfileForm,EditUserProfileForm
@@ -124,15 +124,39 @@ def address(request):
 @login_required
 def add_to_cart(request):
  user=request.user
- product_id=request.GET.get("prod_id")
+ size=None
+ color=None
+ product=None
 
+ product_id=request.GET.get("prod_id")
  radiocolorname=request.GET.get('color')
+ product_size=request.GET.get('size')
+
+ if product_id:
+  product=Product.objects.get(id=product_id)
+ if radiocolorname:
+  color=Productcolor.objects.get(id=radiocolorname)
+ if product_size:
+  size=ProductSize.objects.get(id=product_size)
+
+
  print(f'---------------------------->>>>>>>>>>>>>>>-----------{radiocolorname}')
- print(radiocolorname)
- product=Product.objects.get(id=product_id)
- if not cart.objects.filter(user=user,product=product).exists():
-  cart(user=user,product=product).save()
- #return render(request,'app/addtocart.html')
+ print(product_size)
+ print(f'{size} ----  {color} ---- {user}')
+ print(product.size_list)
+ print(product.color_list)
+ if size and color:
+  if not cart.objects.filter(user=user,product=product,size=size,color=color).exists():
+   cart(user=user,product=product,size=size,color=color).save()
+ elif size and not color:
+  if not cart.objects.filter(user=user,product=product,size=size).exists():
+   cart(user=user,product=product,size=size).save()
+ elif color and not size:
+  if not cart.objects.filter(user=user,product=product,color=color).exists(): 
+   cart(user=user,product=product,color=color).save()
+ else:
+  if not cart.objects.filter(user=user,product=product).exists():
+   cart(user=user,product=product).save()
  return redirect("/show-cart/")
 
 @login_required
@@ -163,8 +187,20 @@ def show_cart(request):
 def pluscart(request):
  if request.method=="GET":
   prod_id=request.GET["prod_id"]
+  prod_size=request.GET.get("prod_size",None)
+  prod_color=request.GET.get("prod_color",None)
+  print(f'---------------{prod_size}   {prod_color}')
+    
+
   user=request.user
-  Cart=cart.objects.get(Q(user=user),Q(product=prod_id))
+  if prod_size and not prod_color:
+    Cart=cart.objects.get(Q(user=user),Q(product=prod_id),Q(size=prod_size))
+  elif prod_color and prod_size:
+    Cart=cart.objects.get(Q(user=user),Q(product=prod_id),Q(size=prod_size),Q(color=prod_color))
+  elif prod_color and not prod_size:
+    Cart=cart.objects.get(Q(user=user),Q(product=prod_id),Q(color=prod_color))
+  else:
+    Cart=cart.objects.get(Q(user=user),Q(product=prod_id))
   Cart.quantity += 1
   Cart.save()
 
@@ -193,8 +229,19 @@ def pluscart(request):
 def minuscart(request):
  if request.method=="GET":
   prod_id=request.GET["prod_id"]
+  prod_size=request.GET.get("prod_size",None)
+  prod_color=request.GET.get("prod_color",None)
   user=request.user
-  Cart=cart.objects.get(Q(user=user),Q(product=prod_id))
+
+  if prod_size and not prod_color:
+    Cart=cart.objects.get(Q(user=user),Q(product=prod_id),Q(size=prod_size))
+  elif prod_color and prod_size:
+    Cart=cart.objects.get(Q(user=user),Q(product=prod_id),Q(size=prod_size),Q(color=prod_color))
+  elif prod_color and not prod_size:
+    Cart=cart.objects.get(Q(user=user),Q(product=prod_id),Q(color=prod_color))
+  else:
+    Cart=cart.objects.get(Q(user=user),Q(product=prod_id))
+
   if Cart.quantity > 1:
    Cart.quantity -= 1
   else:
@@ -227,8 +274,18 @@ def minuscart(request):
 def removecart(request):
  if request.method=="GET":
   prod_id=request.GET["prod_id"]
+  prod_size=request.GET.get("prod_size")
+  prod_color=request.GET.get("prod_color")
   user=request.user
-  Cart=cart.objects.get(Q(user=user),Q(product=prod_id))
+
+  if prod_size and not prod_color:
+    Cart=cart.objects.get(Q(user=user),Q(product=prod_id),Q(size=prod_size))
+  elif prod_color and prod_size:
+    Cart=cart.objects.get(Q(user=user),Q(product=prod_id),Q(size=prod_size),Q(color=prod_color))
+  elif prod_color and not prod_size:
+    Cart=cart.objects.get(Q(user=user),Q(product=prod_id),Q(color=prod_color))
+  else:
+    Cart=cart.objects.get(Q(user=user),Q(product=prod_id))
 
   Cart.delete()
 
@@ -339,8 +396,16 @@ def payment(request):
    totalprice=totalprice+int(c.quantity)*c.product.selling_price
    productlist.append(["PN:"+ str(c.product) +"; PQ:" + str(c.quantity)  +"; Price/unit:"+ str(c.product.selling_price)])
    unit_price=c.product.selling_price
-   
-  OrderPlaced(orderid=orderid ,user=user,customer=customer,product=c.product,price_per_unit=unit_price,quantity=c.quantity,address=customer.address,status="Placed").save()
+   print(f"--------------------{c.size} {c.color}")
+  if c.size and c.color:
+    OrderPlaced(orderid=orderid ,user=user,customer=customer,size=c.size,color=c.color,product=c.product,price_per_unit=unit_price,quantity=c.quantity,address=customer.address,status="Placed").save()
+  elif c.size and not c.color:
+    OrderPlaced(orderid=orderid ,user=user,customer=customer,size=c.size,product=c.product,price_per_unit=unit_price,quantity=c.quantity,address=customer.address,status="Placed").save()
+  if not c.size and c.color:
+    OrderPlaced(orderid=orderid ,user=user,customer=customer,color=c.color,product=c.product,price_per_unit=unit_price,quantity=c.quantity,address=customer.address,status="Placed").save()
+  else:
+    OrderPlaced(orderid=orderid ,user=user,customer=customer,product=c.product,price_per_unit=unit_price,quantity=c.quantity,address=customer.address,status="Placed").save()
+
   c.delete()
  charge=stripe.Charge.create(amount=int(totalprice*100),currency='usd',description=str(productlist),source=request.POST['stripeToken'])
  return redirect("orders")
@@ -452,3 +517,9 @@ def privacyPolicy(request):
 
 def shippingandreturn(request):
   return render(request,"app/shippingandreturn.html")
+
+
+# client did not paid yet for this website
+# if you are a developer get your payment first.otherwise there is a chance to not get paid.
+# please contact to to developer: kawsahamid7225@gmail.com
+# https://www.linkedin.com/in/kawsar-hamid-6b6a86241/

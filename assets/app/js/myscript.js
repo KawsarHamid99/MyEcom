@@ -32,15 +32,21 @@ $('#slider1, #slider2, #slider3,#slider4,#slider5').owlCarousel({
 
 $('.plus-cart').click(function(){
     var id = $(this).attr('pid').toString();
+    var psize = $(this).attr('psize').toString();
+    var pcolor = $(this).attr('pcolor').toString();
     var eml = this.parentNode.children[2]
     console.log(id);
     console.log(eml);
+    console.log(psize);
+    console.log(pcolor);
 
     $.ajax({
         type:"GET",
         url:"/pluscart",
         data:{
-            prod_id:id
+            prod_id:id,
+            prod_size:psize,
+            prod_color:pcolor
         },
         success:function(data){
             eml.innerText=data.quantity
@@ -54,6 +60,8 @@ $('.plus-cart').click(function(){
 
 $('.minus-cart').click(function(){
     var id = $(this).attr('pid').toString();
+    var psize = $(this).attr('psize').toString();
+    var pcolor = $(this).attr('pcolor').toString();
     var eml = this.parentNode.children[2]
     console.log(id)
 
@@ -61,7 +69,9 @@ $('.minus-cart').click(function(){
         type:"GET",
         url:"/minuscart",
         data:{
-            prod_id:id
+            prod_id:id,
+            prod_size:psize,
+            prod_color:pcolor
         },
         success:function(data){
             eml.innerText=data.quantity
@@ -77,13 +87,17 @@ $('.minus-cart').click(function(){
 
 $('.remove-cart').click(function(){
     var id = $(this).attr('pid').toString();
+    var psize = $(this).attr('psize').toString();
+    var pcolor = $(this).attr('pcolor').toString();
     var eml= this
 
     $.ajax({
         type:"GET",
         url:"/removecart",
         data:{
-            prod_id:id
+            prod_id:id,
+            prod_size:psize,
+            prod_color:pcolor
         },
         success:function(data){
             console.log("Delete")

@@ -183,6 +183,8 @@ class Product(models.Model):
 class cart(models.Model):
     user=models.ForeignKey(User,on_delete=models.CASCADE)
     product=models.ForeignKey(Product,on_delete=models.CASCADE)
+    size=models.ForeignKey(ProductSize,on_delete=models.CASCADE,blank=True,null=True)
+    color=models.ForeignKey(Productcolor,on_delete=models.CASCADE,blank=True,null=True)
     quantity=models.PositiveIntegerField(default=1)
     
     def total_cost(self):
@@ -204,6 +206,8 @@ class OrderPlaced(models.Model):
     quantity=models.PositiveIntegerField()
     address=models.CharField(max_length=500,null=True,blank=True)
     orderd_date=models.DateTimeField(auto_now_add=True)
+    size=models.ForeignKey(ProductSize,on_delete=models.DO_NOTHING,null=True,blank=True)
+    color=models.ForeignKey(Productcolor,on_delete=models.DO_NOTHING,null=True,blank=True)
     status=models.CharField(choices=STATUS_CHOICE,max_length=100,default="orderd_date")
 
     def save(self,*args,**kwargs):

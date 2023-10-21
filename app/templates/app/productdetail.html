@@ -3,87 +3,135 @@
 {% block title %}Product Detail{% endblock title %}
 {% block main-content %}
 <div class="container my-5">
- <div class="row">
-  <div class="col-sm-6 text-center align-self-start align-self-lg-center">
-   <div>
-    <img src="{{ product.product_image.url }}" alt="" class="img-fluid img-thumbnail" style="height:400px">
-   </div>
-  </div>
-  <!-- <div class="col-sm-5 offset-sm-1"> -->
-  <div class="col-sm-6">
-   <h2>Product Title: {{product.title}}</h2>
-   <hr>
-   <p>Product Description: {{product.description}}</p> <br>
-   {% if  product.discounted_price %}
-   <h4>${{product.discounted_price}} <small class="fw-light text-decoration-line-through"> {{product.selling_price}}</small></h4> <br>
-   {% else %}
-   <h4>${{product.selling_price}}</h4> <br>
-   {% endif %}
-   <div class="row">
-    {% if product.size.all %}
-    <div class="col col-md-3 d-flex ">
-        <div class="fs-5  text-muted me-2  " > SIZE: </div>
-        <select class="form-select mb-md-3   " name="size" aria-label="Default select example" style="width: 100%;" required>
-            {% for size in product.size.all %}
-                <option value="{{size.id}}">{{size.shortform}}</option>    
-            {% endfor %}
-            
-          </select>
-    </div>
-   {% endif %}
-   </div>
-   {% if product.color.all %}
-   <div class="row d-flex border ">
-    <div class="col d-flex ">
-        <div class="fs-5  text-muted me-2 " > COLOR: </div>
-            <div class=" mx-2 ">
-                <div class="form-group  row  d-flex justify-content-center">
-                    {% for color in product.color.all %}
-                    <div class="  m-1 px-2 "  style=" border-radius: 20% !important; width: fit-content; background-color: {{color.color_code}};  ">
-                        <input type="radio" id="colorOption1" name="color"  class="" checked >
-                        <label class="text-white "  for="colorOption1">{{color.name}}</label>
-                    </div>
-                    {% endfor %}
-                    
-                    <!-- Add more color options as needed -->
-                </div>
+    <div class="row">
+        <div class="col-sm-6 text-center align-self-start align-self-lg-center">
+            <div>
+                <img src="{{ product.product_image.url }}" alt="" class="img-fluid img-thumbnail" style="height:400px">
             </div>
+        </div>
+        <!-- <div class="col-sm-5 offset-sm-1"> -->
+        <div class="col-sm-6">
+            <h2>Product Title: {{product.title}}</h2>
+            <hr>
+            <p>Product Description: {{product.description}}</p> <br>
+            {% if product.discounted_price %}
+            <h4>${{product.discounted_price}} <small class="fw-light text-decoration-line-through">
+                    {{product.selling_price}}</small></h4> <br>
+            {% else %}
+            <h4>${{product.selling_price}}</h4> <br>
+            {% endif %}
+
+            {% if request.user.is_authenticated %}
+           
+            <form action="/cart" method="get" class="d-inline">
+                <div>
+                    <div class="row">
+                        {% if product.size.all %}
+                        <div class="col col-md-3 d-flex ">
+                            <div class="fs-5  text-muted me-2  "> SIZE: </div>
+                            <select class="form-select mb-md-3   " name="size" aria-label="Default select example"
+                                style="width: 100%;" required>
+                                {% for size in product.size.all %}
+                                <option value="{{size.id}}">{{size.shortform}}</option>
+                                {% endfor %}
+        
+                            </select>
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% if product.color.all %}
+                    <div class="row d-flex border ">
+                        <div class="col d-flex ">
+                            <div class="fs-5  text-muted me-2 "> COLOR: </div>
+                            <div class=" mx-2 ">
+                                <div class="form-group  row  d-flex justify-content-center">
+                                    {% for color in product.color.all %}
+                                    <div class="  m-1 px-2 "
+                                        style=" border-radius: 20% !important; width: fit-content; background-color: {{color.color_code}};  ">
+                                        <input type="radio" id="colorOption1" name="color" value="{{color.id}}" class="" checked>
+                                        <label class="text-white " for="colorOption1">{{color.name}}</label>
+                                    </div>
+                                    {% endfor %}
+        
+                                    <!-- Add more color options as needed -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    <hr>
+                </div>
+
+                <div class="d-inline-flex">
+                    <input type="hidden" name="prod_id" value="{{product.id}}" id="prod_ids">
+                    <button type="submit" class="btn btn-primary shadow  px-2 px-md-4 py-md-2">Add To The Cart</button>
+                </div>
+            </form>
+         
+            {% endif %}
+
+
+            {% if not request.user.is_authenticated %}
+            <form action="/cart" method="get" class="d-inline">
+                <div>
+                    <div class="row">
+                        {% if product.size.all %}
+                        <div class="col col-md-3 d-flex ">
+                            <div class="fs-5  text-muted me-2  "> SIZE: </div>
+                            <select class="form-select mb-md-3   " name="size" aria-label="Default select example"
+                                style="width: 100%;" required>
+                                {% for size in product.size.all %}
+                                <option value="{{size.id}}">{{size.shortform}}</option>
+                                {% endfor %}
+        
+                            </select>
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% if product.color.all %}
+                    <div class="row d-flex border ">
+                        <div class="col d-flex ">
+                            <div class="fs-5  text-muted me-2 "> COLOR: </div>
+                            <div class=" mx-2 ">
+                                <div class="form-group  row  d-flex justify-content-center">
+                                    {% for color in product.color.all %}
+                                    <div class="  m-1 px-2 "
+                                        style=" border-radius: 20% !important; width: fit-content; background-color: {{color.color_code}};  ">
+                                        <input type="radio" id="colorOption1" name="color" class="" checked>
+                                        <label class="text-white " for="colorOption1">{{color.name}}</label>
+                                    </div>
+                                    {% endfor %}
+        
+                                    <!-- Add more color options as needed -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    <hr>
+                </div>
+
+                <div class="d-inline-flex">
+                    <input type="hidden" name="prod_id" value="{{product.id}}" id="prod_ids">
+                    <button type="submit" class="btn btn-primary shadow px-4 py-2">Add To The Cart</button>
+                </div>
+                
+            </form>
+            {% endif %}
+
+            <!-- <a href="{% url 'add-to-cart' %}" class="btn btn-primary shadow px-5 py-2">Add to Cart</a> -->
+
+
+            <a href="{% url 'buy-now' %}" class="btn btn-danger shadow px-2 px-md-4 py-2 ms-4">Buy Now</a>
+            <h5 class="mt-5">Available Offers</h5>
+            <ul>
+                <li>Bank Offer 5% Unlimited Cashback on Flipkart Axis Bank Credit</li>
+                <li>Special Price Get extra ₹3000 off (price inclusive of discount)</li>
+                <li>No cost EMI ₹1,667/month. Standard EMI also available</li>
+                <li>Partner Offer ₹2000 Flipkart Gift Card on Every 1000th Transaction with a new Visa Debit/Credit Card
+                </li>
+            </ul>
+        </div>
     </div>
-   </div>
-   {% endif %}
-   <hr>
-   {% if  request.user.is_authenticated %}
-   {% if not item_already_in_cart %}
-    <form action="/cart" method="get" class="d-inline">
-    <input type="hidden" name="prod_id" value="{{product.id}}" id="prod_ids">
-    <button type="submit" class="btn btn-primary shadow  px-2 px-md-4 py-md-2">Add To The Cart</button>
-   </form> 
-   {% else %}
-  
-   <a href="{% url 'showcart' %}" class="btn btn-info shadow px-2 px-md-4 py-2">Show cart </a>
-   {% endif %}
-   {% endif %}
-
-      
-   {% if not request.user.is_authenticated %}
-    <form action="/cart" method="get" class="d-inline">
-    <input type="hidden" name="prod_id" value="{{product.id}}" id="prod_ids">
-    <button type="submit" class="btn btn-primary shadow px-4 py-2">Add To The Cart</button>
-   </form> 
-   {% endif %}
-   
-   <!-- <a href="{% url 'add-to-cart' %}" class="btn btn-primary shadow px-5 py-2">Add to Cart</a> -->
-
-
-   <a href="{% url 'buy-now' %}" class="btn btn-danger shadow px-2 px-md-4 py-2 ms-4">Buy Now</a>
-   <h5 class="mt-5">Available Offers</h5>
-   <ul>
-    <li>Bank Offer 5% Unlimited Cashback on Flipkart Axis Bank Credit</li>
-    <li>Special Price Get extra ₹3000 off (price inclusive of discount)</li>
-    <li>No cost EMI ₹1,667/month. Standard EMI also available</li>
-    <li>Partner Offer ₹2000 Flipkart Gift Card on Every 1000th Transaction with a new Visa Debit/Credit Card</li>
-   </ul>
-  </div>
- </div>
 </div>
 {% endblock main-content %}
