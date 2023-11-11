@@ -46,6 +46,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    'app.middlewares.Underconstraction',
 ]
 
 ROOT_URLCONF = "MyEcom.urls"
@@ -137,3 +138,13 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 STRIPE_PUBLIC_KEY=os.environ.get('STRIPE_PUBLIC_KEY')
 STRIPE_SECRET_KEY= os.environ.get('STRIPE_SECRET_KEY')
+
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'mail.garbleddeals.com'
+EMAIL_HOST_USER = 'support@garbleddeals.com' # use any valid webmail address
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+EMAIL_HOST_PASSWORD = '*Garbleddeals*'
+EMAIL_PORT = 465
+EMAIL_USE_SSL = True
+EMAIL_USE_TLS = False

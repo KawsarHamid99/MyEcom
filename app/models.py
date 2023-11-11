@@ -1,11 +1,13 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.core.validators import MaxValueValidator,MinValueValidator
-
+from django.db.models.signals import post_save,pre_save
+from django.dispatch import receiver
 from django.utils.text import slugify
 from mptt.models import MPTTModel, TreeForeignKey
 # Create your models here.
-
+from django.core.mail import EmailMessage
+from django.conf import settings
 """"
 from django.db import models
 from PIL import Image
@@ -37,7 +39,7 @@ class FixedSizeImage(models.Model):
 """
 
 
-STATE_CHOICE=(
+kamlaSTATE_CHOICE=(
     ("dhaka","Dhaka"),
     ("khulna","Khulna"),
     ('rajsahi','Rajsahi'),
@@ -57,11 +59,15 @@ STATUS_CHOICE=(
     ('Cancel','Cancel')
 )
 
+class StateSelect(models.Model):
+    name=models.CharField(max_length=100,null=True,blank=True)
+    zipcode=models.PositiveIntegerField(null=True,blank=True)
+    shippingcost=models.PositiveIntegerField(null=True,blank=True,default=20)
 
-class States_choice(models.Model):
-    name=models.CharField(max_length=200)
-    zipcode=models.PositiveIntegerField()
-    
+class StateList(models.Model):
+    name=models.CharField(max_length=100,null=True,blank=True)
+    zipcode=models.PositiveIntegerField(null=True,blank=True)
+    shippingcost=models.PositiveIntegerField(null=True,blank=True,default=20)
 
 class ProductSize(models.Model):
     name=models.CharField(max_length=100,null=True,blank=True,unique=True)
@@ -148,7 +154,8 @@ class Customer(models.Model):
     address=models.CharField(max_length=100)
     city=models.CharField(max_length=100)
     zipcode=models.IntegerField()
-    state=models.CharField(choices=STATE_CHOICE,max_length= 50)
+    state=models.CharField(choices=kamlaSTATE_CHOICE,max_length=100,null=True,blank=True)
+    #state=models.ForeignKey(States_choice,on_delete=models.DO_NOTHING,null=True,blank=True)
 
 
     def __str__(self):
@@ -218,6 +225,25 @@ class OrderPlaced(models.Model):
     def total_cost(self):
         return self.price_per_unit * self.quantity
 
+@receiver(pre_save, sender=OrderPlaced)
+def my_model_updated(sender, instance, **kwargs):
+    if instance.pk:
+        old_instance = OrderPlaced.objects.get(pk=instance.pk)
+        if instance.status != old_instance.status or instance.trcking_id != old_instance.trcking_id:
+            
+            message='''
+                hello {},
+                Here is update of your order.
+
+                order id: {}
+                Current order status: {}
+                Tracking id : {}
 
 
-
+                Thanks,
+                Garbleddeals
+                '''.format(instance.user.username,instance.orderid,instance.status,instance.trcking_id)
+            mail=EmailMessage("Updated Order Information",message,settings.EMAIL_HOST_USER,[instance.user.email])
+            mail.send()
+# Connect the pre_save signal
+pre_save.connect(my_model_updated, sender=OrderPlaced)

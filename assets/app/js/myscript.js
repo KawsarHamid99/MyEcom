@@ -36,6 +36,7 @@ $('.plus-cart').click(function(){
     var pcolor = $(this).attr('pcolor').toString();
     var eml = this.parentNode.children[2]
     console.log(id);
+    
     console.log(eml);
     console.log(psize);
     console.log(pcolor);

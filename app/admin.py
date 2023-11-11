@@ -1,10 +1,13 @@
 from django.contrib import admin
-from .models import Product,cart,Customer,OrderPlaced,Brand,Productcolor,ProductSize
+from .models import Product,cart,Customer,OrderPlaced,Brand,Productcolor,ProductSize,StateList
 # Register your models here.
+
+
 
 @admin.register(Productcolor)
 class ProductcolorAdmin(admin.ModelAdmin):
     list_display=['id','name','color_code']
+
 
 @admin.register(ProductSize)
 class ProductSizeAdmin(admin.ModelAdmin):
@@ -48,3 +51,8 @@ class CategoryAdmin(DraggableMPTTAdmin):
     indented_title.short_description = 'Category'
 
 admin.site.register(Category, CategoryAdmin)
+
+
+@admin.register(StateList)
+class StateSelectAdmin(admin.ModelAdmin):
+    list_display=['id','name']

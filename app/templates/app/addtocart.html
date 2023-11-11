@@ -4,8 +4,10 @@
 
 
 {% block main-content %}
-{% if cart %}
-<div class="container my-5">
+
+
+{% if cart %} 
+<div class="container content  my-5">
  <div class="row">
   <!-- <h1 class="text-center text-muted text-uppercase m3-5">Shopping Cart</h1> -->
   <div class="col-sm-8">
@@ -85,7 +87,7 @@
  </div>
 </div>
 {% else %}
-<div class="container">
+<div class="container content">
   <div class=" my-xl-5 ">
     <a  class="btn  d-flex felx-row justify-content-center border border-light " href="{% url 'home' %}">
       <div class=" pt-xl-3  ">

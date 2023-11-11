@@ -23,7 +23,7 @@
 
             {% if request.user.is_authenticated %}
            
-            <form action="/cart" method="get" class="d-inline">
+            <form action="/cart" method="get" id="myForm" class="d-inline">
                 <div>
                     <div class="row">
                         {% if product.size.all %}
@@ -65,6 +65,9 @@
                 <div class="d-inline-flex">
                     <input type="hidden" name="prod_id" value="{{product.id}}" id="prod_ids">
                     <button type="submit" class="btn btn-primary shadow  px-2 px-md-4 py-md-2">Add To The Cart</button>
+                    <button type="submit" id="buy_now" class="btn btn-danger shadow px-2 px-md-4 py-2 ms-4">Buy now</button>
+
+                    <!-- <a href="#" type="submit" class="btn btn-danger shadow px-2 px-md-4 py-2 ms-4">Buy Now</a> -->
                 </div>
             </form>
          
@@ -114,6 +117,8 @@
                 <div class="d-inline-flex">
                     <input type="hidden" name="prod_id" value="{{product.id}}" id="prod_ids">
                     <button type="submit" class="btn btn-primary shadow px-4 py-2">Add To The Cart</button>
+                    <button type="submit" class="btn btn-danger shadow px-2 px-md-4 py-2 ms-4">Buy Now</button>
+                    
                 </div>
                 
             </form>
@@ -122,7 +127,7 @@
             <!-- <a href="{% url 'add-to-cart' %}" class="btn btn-primary shadow px-5 py-2">Add to Cart</a> -->
 
 
-            <a href="{% url 'buy-now' %}" class="btn btn-danger shadow px-2 px-md-4 py-2 ms-4">Buy Now</a>
+            <!-- <a href="{% url 'buy_now_checkout' %}" class="btn btn-danger shadow px-2 px-md-4 py-2 ms-4">Buy Now</a> -->
             <h5 class="mt-5">Available Offers</h5>
             <ul>
                 <li>Bank Offer 5% Unlimited Cashback on Flipkart Axis Bank Credit</li>
@@ -134,4 +139,16 @@
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const myForm = document.getElementById('myForm');
+        const myOtherForm = document.getElementById('myOtherForm');
+        const changeActionBtn = document.getElementById('buy_now');
+
+        changeActionBtn.addEventListener('click', function () {
+            myForm.action = '{% url 'buy_now_checkout' %}';
+        });
+    });
+</script>
 {% endblock main-content %}

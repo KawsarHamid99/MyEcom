@@ -1,0 +1,104 @@
+{% extends 'app/base.html' %}
+{% load static %}
+{% load custom_filters %}
+{% block title %}Checkout{% endblock title %}
+{% block main-content %}
+<div class="container content">
+ <div class="row mt-5">
+  <div class="col-sm-6">
+    <h4>Order Summary</h4>
+    <hr>
+
+      <div class="card mb-2">
+        <div class="card-body">
+          <h5>Product: {{cart_items.title}}</h5>
+          <div class="row">
+            <div class="col">
+                <p>Quantity: 1</p>
+                {% if product_size %}
+                <p>Size: {{product_size}}</p>
+                {% endif %}
+
+                {% if product_color %}
+                <p>Color : <span class="text-white border border-dark shadow p-1" style="background-color:{{product_color.color_code}};">{{product_color}}</span></p>
+                {% endif %}
+                <p class="fw-bold">Price: ${{amount}}</p>
+            </div>
+            <div class="col">
+                <img class="float-end" src="{{ cart_items.product_image.url }}" style="max-width: 100px;" alt="">
+            </div>
+
+          </div>
+        </div>
+      </div>
+      
+      <p class="fw-bold">Total Amount with Shipping Amount: ${{totalamount}}</p>
+    <small>Term and Condition: Lorem ipsum dolor sit amet consectetur adipisicing elit. Mollitia, ullam saepe! Iure optio repellat dolor velit, minus rem. Facilis cumque neque numquam laboriosam, accusantium adipisci nisi nihil in et quis?</small>
+  </div>
+  <div class="col-sm-4 offset-sm-1">
+    <h4>Select Shipping Address</h4>
+    <hr>
+    <form action="/buy_now_payment/" method="post">
+      {% csrf_token %}
+      <input type="text" hidden name="product" value="{{cart_items.id}}">
+      <input type="text" hidden name="product_size" value="{{product_size.id}}">
+      <input type="text" hidden name="product_color" value="{{product_color.id}}">
+      {% if add %}
+      {% for ad in add %}
+      <div class="card">
+        <div class="card-body">
+          <h5>{{ad.name}}</h5>
+          <p>{{ad.locality}}, {{ad.city}}, {{ad.state}} - {{ad.zipcode}}</p>
+        </div>
+      </div>
+      <div class="form-check mt-2 mb-5">
+        <input class="form-check-input" type="radio" value="{{ad.id}}" name="custid" id="custid{{forloop.counter}}" required>
+        <label class="form-check-label fw-bold" for="custid{{forloop.counter}}">
+          Address: {{forloop.counter}}
+        </label>
+      </div>
+      {% endfor %}
+      {% else %}
+      <div class="card my-md-5">
+        <div class="card-body">
+          <div class="text-uppercase text-center ">
+            <h3 class="text-muted">No Shipping address has been found</h3>
+            <p class="text-muted">without shipping address payment cannot be processed.</p>
+            <a href="{% url 'profile' %}" class="btn border btn-primary border-primary px-3 py-md-2 mt-2 mb-md-3  ">add shiiping address</a>
+          </div>
+
+        </div>
+
+      </div>
+      {% endif %}
+      <div class="text-center pb-2 border border-primary mb-5">
+        <p class="text-info pb-0 mb-0" id="checkouttext">CHOOSE A ADDRESS TO MAKE PAYMENT</p>
+        <button type="submit" class="btn btn-warning mt-2 fw-bold" id="checkoutButton" disabled>
+          <script src="https://checkout.stripe.com/checkout.js" class="stripe-button" data-key="{{key}}"
+            data-description="PAYMENT GATEWAY"
+            data-amount="{% total_checkoutPrice totalamount %}"
+            data-locale="auto"></script>
+        </button>
+      </div>
+    </form>
+    
+    <script>
+      // Get all the radio buttons
+      const radioButtons = document.querySelectorAll('input[type="radio"]');
+      const checkoutButton = document.getElementById('checkoutButton');
+      const checkouttext = document.getElementById('checkouttext');
+    
+      // Add a click event listener to each radio button
+      radioButtons.forEach((radio) => {
+        radio.addEventListener('click', function () {
+          // Enable the checkout button when a radio button is clicked
+          checkoutButton.removeAttribute('disabled');
+          checkouttext.setAttribute('hidden','true');
+        });
+      });
+    </script>
+    
+    </div>
+  </div>
+</div>
+{% endblock main-content %}
